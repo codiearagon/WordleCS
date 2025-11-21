@@ -8,8 +8,8 @@ namespace WordleServer
 {
     class Server
     {
-        private const int PORT = 11020;
         private const string ADDRESS = "127.0.0.1";
+        private const int PORT = 11020;
 
         private static Socket serverSock = new Socket
             (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -42,6 +42,8 @@ namespace WordleServer
             IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
 
             Console.WriteLine("Accepted client: {0}:{1}", clientEndPoint?.Address.ToString(), clientEndPoint?.Port);
+
+            client.Close();
         }
     }
 }
