@@ -66,6 +66,7 @@ namespace WordleServer
             {
                 case "set_username":
                     player.SetName(parts[1]);
+                    Console.WriteLine("Set name: {0}", player.playerName);
                     break;
                 case "create_room":
                     CreateRoom(player, parts[1]);

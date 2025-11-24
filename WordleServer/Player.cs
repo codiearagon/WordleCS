@@ -48,8 +48,8 @@ namespace WordleServer
                     continue;
                 }
 
-                Console.WriteLine("Received 0 bytes, connection might be lost.");
-                return [0];
+                //Console.WriteLine("Received 0 bytes, connection might be lost.");
+                //return [0];
             }
 
             return buffer;
