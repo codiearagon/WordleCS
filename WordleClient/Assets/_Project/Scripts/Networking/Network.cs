@@ -13,7 +13,7 @@ public class Network
     public void ConnectToServer()
     {
         clientSocket.Connect(ADDRESS, PORT);
-        Debug.Log("Connected to Server");
+ 	Debug.Log("Connected to Server");
 
         clientSocket.Close();
     }

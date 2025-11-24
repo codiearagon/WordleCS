@@ -14,6 +14,8 @@ namespace WordleServer
         private static Socket serverSock = new Socket
             (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
+        private static List<Room> rooms = new List<Room>(); 
+
         static void Main(string[] args)
         {
             CreateServer();
@@ -40,10 +42,39 @@ namespace WordleServer
         private static void HandleClient(Socket client)
         {
             IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
-
             Console.WriteLine("Accepted client: {0}:{1}", clientEndPoint?.Address.ToString(), clientEndPoint?.Port);
 
+            Player newPlayer = new Player(client);
+
             client.Close();
+        }
+
+        private static void CreateRoom(Player host, string roomName)
+        {
+            foreach (Room room in rooms)
+            {
+                if (room.roomName == roomName)
+                {
+                    host.SendMessage("Room name already exists");
+                    return;
+                }
+            }
+
+            Room newRoom = new Room(host, roomName);
+            rooms.Add(newRoom);
+        }
+
+        private static void JoinRoom(Player player, string roomName)
+        {
+            foreach (Room room in rooms)
+            {
+                if (room.roomName == roomName)
+                {
+                    room.AddPlayer(player);
+                    player.SendMessage("Successfully joined room.");
+                    return;
+                }
+            }
         }
     }
 }
