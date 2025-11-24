@@ -46,7 +46,34 @@ namespace WordleServer
 
             Player newPlayer = new Player(client);
 
+            string message;
+            while(true)
+            {
+                message = newPlayer.ReceiveString();
+                HandleClientMessage(ref newPlayer, message);
+            }
+
+
             client.Close();
+        }
+
+        private static void HandleClientMessage(ref Player player, string message)
+        {
+            string[] parts = message.Split(';');
+
+            // first element is always the action, and following are arguments
+            switch(parts[0])
+            {
+                case "set_username":
+                    player.SetName(parts[1]);
+                    break;
+                case "create_room":
+                    CreateRoom(player, parts[1]);
+                    break;
+                case "join_room":
+                    JoinRoom(player, parts[1]);
+                    break;
+            }
         }
 
         private static void CreateRoom(Player host, string roomName)

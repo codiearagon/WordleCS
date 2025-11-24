@@ -24,6 +24,37 @@ namespace WordleServer
             playerName = name;
         }
 
+        public string ReceiveString()
+        {
+            byte[] dataLength = ReceiveAllData(4);
+            int length = BitConverter.ToInt32(dataLength, 0);
+
+            byte[] message = ReceiveAllData(length);
+
+            return Encoding.UTF8.GetString(message);
+        }
+
+        public byte[] ReceiveAllData(int size)
+        {
+            byte[] buffer = new byte[size];
+            
+            int totalReceived = 0;
+            while (totalReceived < size)
+            {
+                int bytesReceived = socket.Receive(buffer, totalReceived, size - totalReceived, SocketFlags.None);
+                if (bytesReceived > 0)
+                {
+                    totalReceived += bytesReceived;
+                    continue;
+                }
+
+                Console.WriteLine("Received 0 bytes, connection might be lost.");
+                return [0];
+            }
+
+            return buffer;
+        }
+
         public void SendInt(int num)
         {
             num = IPAddress.HostToNetworkOrder(num);
@@ -56,6 +87,9 @@ namespace WordleServer
                     totalSent += bytesSent;
                     continue;
                 }
+
+                Console.WriteLine("Sent 0 bytes, connection could be lost.");
+                return;
             }
         }
     }
