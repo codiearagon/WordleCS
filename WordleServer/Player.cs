@@ -47,9 +47,6 @@ namespace WordleServer
                     totalReceived += bytesReceived;
                     continue;
                 }
-
-                //Console.WriteLine("Received 0 bytes, connection might be lost.");
-                //return [0];
             }
 
             return buffer;

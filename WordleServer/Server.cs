@@ -50,14 +50,14 @@ namespace WordleServer
             while(true)
             {
                 message = newPlayer.ReceiveString();
-                HandleClientMessage(ref newPlayer, message);
+                HandleClientMessage(newPlayer, message);
             }
 
 
             client.Close();
         }
 
-        private static void HandleClientMessage(ref Player player, string message)
+        private static void HandleClientMessage(Player player, string message)
         {
             string[] parts = message.Split(';');
 

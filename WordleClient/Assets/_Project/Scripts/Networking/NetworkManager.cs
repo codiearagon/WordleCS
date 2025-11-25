@@ -3,7 +3,7 @@ using TMPro;
 
 public class NetworkManager : MonoBehaviour
 {
-    public static NetworkManager Instance;
+    private static NetworkManager Instance;
     public static Network network;
 
     void Awake()
@@ -17,17 +17,5 @@ public class NetworkManager : MonoBehaviour
         }
 
         network = new Network();
-    }
-
-    public void ConnectToServer(TMP_InputField name)
-    {
-        if (string.IsNullOrEmpty(name.text))
-        {
-            Debug.Log("Insert name");
-            return;
-        }
-
-        network.ConnectToServer();
-        network.SetUsername(name.text);
     }
 }

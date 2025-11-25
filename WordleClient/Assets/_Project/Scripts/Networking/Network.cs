@@ -22,7 +22,35 @@ public class Network
         SendMessage(String.Format("set_username;{0}", name));
     }
 
-    // helper functions
+    //-----------------------------socket helper functions below--------------------------------
+    private string ReceiveString()
+    {
+        byte[] dataLength = ReceiveAllData(4);
+        int length = BitConverter.ToInt32(dataLength, 0);
+
+        byte[] message = ReceiveAllData(length);
+
+        return Encoding.UTF8.GetString(message);
+    }
+
+    private byte[] ReceiveAllData(int size)
+    {
+        byte[] buffer = new byte[size];
+
+        int totalReceived = 0;
+        while (totalReceived < size)
+        {
+            int bytesReceived = clientSocket.Receive(buffer, totalReceived, size - totalReceived, SocketFlags.None);
+            if (bytesReceived > 0)
+            {
+                totalReceived += bytesReceived;
+                continue;
+            }
+        }
+
+        return buffer;
+    }
+
     private void SendMessage(string message)
     {
         byte[] data = Encoding.UTF8.GetBytes(message);
