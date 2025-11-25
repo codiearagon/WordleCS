@@ -16,11 +16,15 @@ namespace WordleServer
         {
             this.roomName = roomName;
             players.Add(host);
+
+            Console.WriteLine("Successfully created {0} room", roomName);
         }
 
         public void AddPlayer(Player player) 
         {
             players.Add(player);
+
+            Console.WriteLine("{0} joined room {1}", player.playerName, roomName);
         }
     }
 }

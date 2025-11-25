@@ -27,9 +27,14 @@ namespace WordleServer
         public string ReceiveString()
         {
             byte[] dataLength = ReceiveAllData(4);
+            if (dataLength == null)
+                return null;
+
             int length = BitConverter.ToInt32(dataLength, 0);
 
             byte[] message = ReceiveAllData(length);
+            if (message == null)
+                return null;
 
             return Encoding.UTF8.GetString(message);
         }
@@ -42,11 +47,10 @@ namespace WordleServer
             while (totalReceived < size)
             {
                 int bytesReceived = socket.Receive(buffer, totalReceived, size - totalReceived, SocketFlags.None);
-                if (bytesReceived > 0)
-                {
-                    totalReceived += bytesReceived;
-                    continue;
-                }
+                if (bytesReceived == 0)
+                    return null;
+
+                totalReceived += bytesReceived;
             }
 
             return buffer;

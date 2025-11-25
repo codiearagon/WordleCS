@@ -11,9 +11,34 @@ public class LobbyUIManager : MonoBehaviour
         nameText.text = PlayerManager.Instance.username;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CreateRoom(TMP_InputField roomName)
     {
-        
+        if (string.IsNullOrEmpty(roomName.text))
+        {
+            Debug.Log("Room name cannot be empty.");
+            return;
+        } else if (roomName.text.Contains(';'))
+        {
+            Debug.Log("Room name cannot contain ;");
+            return;
+        }
+
+        NetworkManager.network.CreateRoom(roomName.text);
+    }
+
+    public void JoinRoom(TMP_InputField roomName)
+    {
+        if (string.IsNullOrEmpty(roomName.text))
+        {
+            Debug.Log("Empty room name");
+            return;
+        }
+        else if (roomName.text.Contains(';'))
+        {
+            Debug.Log("Room name cannot contain ;");
+            return;
+        }
+
+        NetworkManager.network.JoinRoom(roomName.text);
     }
 }

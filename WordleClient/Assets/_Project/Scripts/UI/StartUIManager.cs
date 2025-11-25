@@ -8,7 +8,12 @@ public class StartUIManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(name.text))
         {
-            Debug.Log("Insert name");
+            Debug.Log("Name cannot be empty.");
+            return;
+        }
+        else if (name.text.Contains(';'))
+        {
+            Debug.Log("Name cannot contain ;");
             return;
         }
 

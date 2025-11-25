@@ -22,6 +22,16 @@ public class Network
         SendMessage(String.Format("set_username;{0}", name));
     }
 
+    public void CreateRoom(string roomName)
+    {
+        SendMessage(String.Format("create_room;{0}", roomName));
+    }
+
+    public void JoinRoom(string roomName)
+    {
+        SendMessage(String.Format("join_room;{0}", roomName));
+    }
+
     //-----------------------------socket helper functions below--------------------------------
     private string ReceiveString()
     {

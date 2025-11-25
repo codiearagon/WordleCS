@@ -46,15 +46,30 @@ namespace WordleServer
 
             Player newPlayer = new Player(client);
 
-            string message;
-            while(true)
+            try
             {
-                message = newPlayer.ReceiveString();
-                HandleClientMessage(newPlayer, message);
+                string message;
+                while (true)
+                {
+                    message = newPlayer.ReceiveString();
+                    if (message == null)
+                    {
+                        Console.WriteLine("Client {0}:{1}, {3} disconnected cleanly.", clientEndPoint?.Address.ToString(), clientEndPoint?.Port, newPlayer.playerName);
+                        break;
+                    }
+
+                    HandleClientMessage(newPlayer, message);
+                }
             }
-
-
-            client.Close();
+            catch (SocketException)
+            {
+                Console.WriteLine("Client {0}:{1}, {3} disconnected unexpectedly.", clientEndPoint?.Address.ToString(), clientEndPoint?.Port, newPlayer.playerName);
+            }
+            finally
+            {
+                client.Close();
+            }
+        
         }
 
         private static void HandleClientMessage(Player player, string message)
@@ -66,7 +81,6 @@ namespace WordleServer
             {
                 case "set_username":
                     player.SetName(parts[1]);
-                    Console.WriteLine("Set name: {0}", player.playerName);
                     break;
                 case "create_room":
                     CreateRoom(player, parts[1]);
