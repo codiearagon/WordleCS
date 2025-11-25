@@ -54,4 +54,18 @@ public class Player : MonoBehaviour
 
         Debug.Log(currentWord);
     }
+
+    public void Submit()
+    {
+        if (currentWord.Length < 5)
+            return;
+
+        Debug.Log("Submitted word");
+        guessCount++;
+        currentWord = "";
+        letterPos = 0;
+
+        if (guessCount >= 6)
+            canType = false;
+    }
 }
