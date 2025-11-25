@@ -1,5 +1,7 @@
 # Wordle Client Server
 
+Wordle with real-time multiplayer competition.
+
 ## To build WordleClient:
 1. Add project to Unity Hub
     1. In Projects tab, click the "Add" button next to "New Project"
