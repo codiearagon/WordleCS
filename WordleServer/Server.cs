@@ -14,7 +14,9 @@ namespace WordleServer
         private static Socket serverSock = new Socket
             (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        private static List<Room> rooms = new List<Room>(); 
+        private static List<Room> rooms = new List<Room>();
+
+        private static int userIdIncrement = 0;
 
         static void Main(string[] args)
         {
@@ -44,7 +46,8 @@ namespace WordleServer
             IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
             Console.WriteLine("Accepted client: {0}:{1}", clientEndPoint?.Address.ToString(), clientEndPoint?.Port);
 
-            Player newPlayer = new Player(client);
+            Player newPlayer = new Player(client, userIdIncrement);
+            userIdIncrement++;
 
             try
             {
@@ -54,7 +57,8 @@ namespace WordleServer
                     message = newPlayer.ReceiveString();
                     if (message == null)
                     {
-                        Console.WriteLine("Client {0}:{1}, {3} disconnected cleanly.", clientEndPoint?.Address.ToString(), clientEndPoint?.Port, newPlayer.playerName);
+                        newPlayer.LeaveRoom();
+                        Console.WriteLine("Client disconnected cleanly.");
                         break;
                     }
 
@@ -63,7 +67,8 @@ namespace WordleServer
             }
             catch (SocketException)
             {
-                Console.WriteLine("Client {0}:{1}, {3} disconnected unexpectedly.", clientEndPoint?.Address.ToString(), clientEndPoint?.Port, newPlayer.playerName);
+                newPlayer.LeaveRoom();
+                Console.WriteLine("Client disconnected unexpectedly.");
             }
             finally
             {
@@ -97,7 +102,7 @@ namespace WordleServer
             {
                 if (room.roomName == roomName)
                 {
-                    host.SendMessage("Room name already exists");
+                    host.SendMessage("error_message;Room name already exists");
                     return;
                 }
             }
@@ -113,7 +118,7 @@ namespace WordleServer
                 if (room.roomName == roomName)
                 {
                     room.AddPlayer(player);
-                    player.SendMessage("Successfully joined room.");
+                    player.SendMessage("error_message;Successfully joined room.");
                     return;
                 }
             }

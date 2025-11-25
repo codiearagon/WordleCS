@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Sockets;
 
 namespace WordleServer
 {
@@ -11,11 +12,16 @@ namespace WordleServer
     {
         public string roomName { get; private set; }
         public List<Player> players { get; private set; } = new List<Player>();
+        public int hostId { get; private set; }
 
         public Room(Player host, string roomName)
         {
             this.roomName = roomName;
+
             players.Add(host);
+            host.SetRoom(this);
+            hostId = host.userId;
+            host.SendMessage(String.Format("room_data;{0};{1};{2}", roomName, players.Count, hostId));
 
             Console.WriteLine("Successfully created {0} room", roomName);
         }
@@ -23,8 +29,17 @@ namespace WordleServer
         public void AddPlayer(Player player) 
         {
             players.Add(player);
+            player.SetRoom(this);
+            player.SendMessage(String.Format("room_data;{0};{1};{2}", roomName, players.Count, hostId));
 
-            Console.WriteLine("{0} joined room {1}", player.playerName, roomName);
+            Console.WriteLine("{0} joined room {1}", player.userId, roomName);
+        }
+
+        public void RemovePlayer(Player player)
+        {
+            players.Remove(player);
+
+            Console.WriteLine("{0} left room {1}", player.userId, roomName);
         }
     }
 }

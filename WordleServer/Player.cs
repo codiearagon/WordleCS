@@ -12,10 +12,13 @@ namespace WordleServer
     {
         public Socket socket { get; private set; }
         public string playerName { get; private set; }
+        public int userId { get; private set; }
+        public Room? room { get; private set; }
 
-        public Player(Socket socket)
+        public Player(Socket socket, int userId)
         {
             this.socket = socket;
+            this.userId = userId;
             playerName = "";
         }
 
@@ -24,9 +27,19 @@ namespace WordleServer
             playerName = name;
         }
 
+        public void SetRoom(Room room)
+        {
+            this.room = room;
+        }
+
+        public void LeaveRoom()
+        {
+            room.RemovePlayer(this);
+        }
+
         public string ReceiveString()
         {
-            byte[] dataLength = ReceiveAllData(4);
+            byte[] dataLength = ReceiveAllData(4); // int byte size
             if (dataLength == null)
                 return null;
 
