@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public static PlayerManager Instance;
-    public string username { get; private set; }
+    private static PlayerManager Instance;
+    public static Player player;
 
     void Awake()
     {
@@ -14,11 +14,7 @@ public class PlayerManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-    }
 
-    public void SetUsername(string username)
-    {
-        this.username = username;
-        NetworkManager.network.SetUsername(username);
+        player = new Player();
     }
 }

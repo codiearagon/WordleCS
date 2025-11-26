@@ -140,13 +140,11 @@ namespace WordleServer
 
         private static void GetRoomData(Player sender)
         {
-            string message = "get_room_data;";
+            string message = String.Format("get_room_data;{0};{1}", sender.room.roomName, sender.room.hostId);
             foreach(Player player in sender.room.players) 
             {
                 message += String.Format("{0};{1};", player.playerName, player.isReady);
             }
-
-            message += String.Format("{0}", sender.room.hostId);
 
             sender.SendMessage(message);
         }

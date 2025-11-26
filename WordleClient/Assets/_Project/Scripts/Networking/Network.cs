@@ -1,6 +1,7 @@
 using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Network
@@ -17,6 +18,11 @@ public class Network
  	    Debug.Log("Connected to Server");
     }
 
+    public void HandleServerMessage(string message)
+    {
+
+    }
+
     public void SetUsername(string name)
     {
         SendMessage(String.Format("set_username;{0}", name));
@@ -30,6 +36,16 @@ public class Network
     public void JoinRoom(string roomName)
     {
         SendMessage(String.Format("join_room;{0}", roomName));
+    }
+
+    public void LeaveRoom()
+    {
+        SendMessage("leave_room");
+    }
+
+    public void GetRoomData()
+    {
+        SendMessage("get_room_data");
     }
 
     //-----------------------------socket helper functions below--------------------------------

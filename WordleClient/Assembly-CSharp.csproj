@@ -63,13 +63,16 @@
   <ItemGroup>
     <Compile Include="Assets\_Project\Scripts\Player\Player.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\StartUIManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\WordleGame.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\KeyButton.cs" />
     <Compile Include="Assets\_Project\Scripts\Player\PlayerManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\UI\RoomUIManager.cs" />
     <Compile Include="Assets\_Project\Scripts\Networking\NetworkManager.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\LobbyUIManager.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\WordRow.cs" />
     <Compile Include="Assets\_Project\Scripts\Networking\Network.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\GameUIManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\Networking\RoomData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

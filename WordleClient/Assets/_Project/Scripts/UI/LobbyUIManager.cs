@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LobbyUIManager : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class LobbyUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        nameText.text = PlayerManager.Instance.username;
+        nameText.text = PlayerManager.player.username;
     }
 
     public void CreateRoom(TMP_InputField roomName)
@@ -24,6 +25,7 @@ public class LobbyUIManager : MonoBehaviour
         }
 
         NetworkManager.network.CreateRoom(roomName.text);
+        SceneManager.LoadScene("RoomScene");
     }
 
     public void JoinRoom(TMP_InputField roomName)
@@ -40,5 +42,6 @@ public class LobbyUIManager : MonoBehaviour
         }
 
         NetworkManager.network.JoinRoom(roomName.text);
+        SceneManager.LoadScene("RoomScene");
     }
 }
