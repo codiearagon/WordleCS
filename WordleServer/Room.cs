@@ -21,7 +21,6 @@ namespace WordleServer
             players.Add(host);
             host.SetRoom(this);
             hostId = host.userId;
-            host.SendMessage(String.Format("room_data;{0};{1};{2}", roomName, players.Count, hostId));
 
             Console.WriteLine("Successfully created {0} room", roomName);
         }
@@ -30,7 +29,6 @@ namespace WordleServer
         {
             players.Add(player);
             player.SetRoom(this);
-            player.SendMessage(String.Format("room_data;{0};{1};{2}", roomName, players.Count, hostId));
 
             Console.WriteLine("{0} joined room {1}", player.userId, roomName);
         }
@@ -40,6 +38,14 @@ namespace WordleServer
             players.Remove(player);
 
             Console.WriteLine("{0} left room {1}", player.userId, roomName);
+        }
+
+        public void BroadcastMessage(string message)
+        {
+            foreach (Player player in players) 
+            {
+                player.SendMessage(message);
+            }
         }
     }
 }

@@ -14,12 +14,14 @@ namespace WordleServer
         public string playerName { get; private set; }
         public int userId { get; private set; }
         public Room? room { get; private set; }
+        public bool isReady { get; private set; }
 
         public Player(Socket socket, int userId)
         {
             this.socket = socket;
             this.userId = userId;
             playerName = "";
+            isReady = false;
         }
 
         public void SetName(string name)
@@ -30,6 +32,11 @@ namespace WordleServer
         public void SetRoom(Room room)
         {
             this.room = room;
+        }
+
+        public void SetReady(bool value)
+        {
+            isReady = value;
         }
 
         public void LeaveRoom()

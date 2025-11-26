@@ -93,6 +93,12 @@ namespace WordleServer
                 case "join_room":
                     JoinRoom(player, parts[1]);
                     break;
+                case "leave_room":
+                    LeaveRoom(player);
+                    break;
+                case "get_room_data":
+                    GetRoomData(player);
+                    break;
             }
         }
 
@@ -102,7 +108,7 @@ namespace WordleServer
             {
                 if (room.roomName == roomName)
                 {
-                    host.SendMessage("error_message;Room name already exists");
+                    host.SendMessage("status;Room name already exists");
                     return;
                 }
             }
@@ -118,10 +124,31 @@ namespace WordleServer
                 if (room.roomName == roomName)
                 {
                     room.AddPlayer(player);
-                    player.SendMessage("error_message;Successfully joined room.");
+                    player.SendMessage("status;Successfully joined room.");
+                    room.BroadcastMessage("room_changed");
                     return;
                 }
             }
+        }
+
+        private static void LeaveRoom(Player player)
+        {
+            player.room.RemovePlayer(player);
+            player.SendMessage("status;Successfully joined room.");
+            player.room.BroadcastMessage("room_changed");
+        }
+
+        private static void GetRoomData(Player sender)
+        {
+            string message = "get_room_data;";
+            foreach(Player player in sender.room.players) 
+            {
+                message += String.Format("{0};{1};", player.playerName, player.isReady);
+            }
+
+            message += String.Format("{0}", sender.room.hostId);
+
+            sender.SendMessage(message);
         }
     }
 }
