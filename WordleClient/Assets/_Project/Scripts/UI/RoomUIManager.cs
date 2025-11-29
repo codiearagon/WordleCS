@@ -1,32 +1,29 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoomUIManager : MonoBehaviour
 {
-    RoomData roomData = null;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
-        StartCoroutine(RoomDataUpdate());
+        NetworkManager.OnRoomDataUpdated += ProcessRoomData;
+
+        // There is a slight timing window where OnEnable will be slower than
+        // the server's reply after NetworkManager requests for RoomData on joining.
+        RoomData lastUpdatedData = NetworkManager.Instance.GetRoomData();
+        if (lastUpdatedData != null)
+            ProcessRoomData(lastUpdatedData);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnDisable()
     {
-        
+        NetworkManager.OnRoomDataUpdated -= ProcessRoomData;
     }
 
-    IEnumerator RoomDataUpdate()
+    void ProcessRoomData(RoomData roomData)
     {
-        while (true)
-        {
-            Debug.Log("Requesting for room udpate...");
-            NetworkManager.network.GetRoomData(data => {
-                roomData = data;
-            });
-            yield return new WaitForSeconds(1f);
-        }
+        Debug.Log("Joined room: " + roomData.roomName);
     }
 
 }

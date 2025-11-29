@@ -35,7 +35,7 @@ namespace WordleServer
 
         public void RemovePlayer(Player player)
         {
-            players.Remove(player);
+            players.RemoveAll(p => p.userId == player.userId);
 
             Console.WriteLine("{0} left room {1}", player.userId, roomName);
         }

@@ -17,7 +17,7 @@ public class StartUIManager : MonoBehaviour
             return;
         }
 
-        NetworkManager.network.ConnectToServer();
+        NetworkManager.Instance.ConnectToServer();
         PlayerManager.player.SetUsername(name.text);
         SceneManager.LoadScene("LobbyScene");
     }

@@ -96,9 +96,8 @@ namespace WordleServer
                 case "leave_room":
                     LeaveRoom(player);
                     break;
-                case "get_room_data":
-                    Console.WriteLine("Received request for room data");
-                    GetRoomData(player);
+                default:
+                    Console.WriteLine("Unrecognized message");
                     break;
             }
         }
@@ -116,6 +115,8 @@ namespace WordleServer
 
             Room newRoom = new Room(host, roomName);
             rooms.Add(newRoom);
+
+            RoomChanged(newRoom);
         }
 
         private static void JoinRoom(Player player, string roomName)
@@ -126,7 +127,7 @@ namespace WordleServer
                 {
                     room.AddPlayer(player);
                     player.SendMessage("status;Successfully joined room.");
-                    room.BroadcastMessage("room_changed");
+                    RoomChanged(player.room);
                     return;
                 }
             }
@@ -134,24 +135,25 @@ namespace WordleServer
 
         private static void LeaveRoom(Player player)
         {
-            player.room.RemovePlayer(player);
+            player.room?.RemovePlayer(player);
             player.SendMessage("status;Successfully joined room.");
-            player.room.BroadcastMessage("room_changed");
+            RoomChanged(player.room);
+
+            if (player.room.players.Count <= 0)
+                rooms.RemoveAll(r => r.roomName == player.room.roomName);
         }
 
-        private static void GetRoomData(Player sender)
+        private static void RoomChanged(Room room)
         {
-            string message = String.Format("get_room_data;{0};{1};{2};", sender.room?.roomName, sender.room?.hostId, sender.room?.players.Count);
+            string message = String.Format("room_changed;{0};{1};{2};", room.roomName, room.hostId, room.players.Count);
 
-            for(int i = 0; i < sender.room?.players.Count; i++)
+            for(int i = 0; i < room.players.Count; i++)
             {
-                Player player = sender.room.players[i];
+                Player player = room.players[i];
                 message += String.Format("{0};{1};{2}", player.playerName, player.userId, player.isReady);
             }
 
-            IPEndPoint clientEndPoint = (IPEndPoint)sender.socket.RemoteEndPoint;
-            Console.WriteLine("Writing back to {0}:{1}...{2}", clientEndPoint.Address.ToString(), clientEndPoint.Port, message);
-            sender.SendMessage(message);
+            room.BroadcastMessage(message);
         }
     }
 }

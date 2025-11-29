@@ -24,7 +24,7 @@ public class LobbyUIManager : MonoBehaviour
             return;
         }
 
-        NetworkManager.network.CreateRoom(roomName.text);
+        NetworkManager.Instance.CreateRoom(roomName.text);
         SceneManager.LoadScene("RoomScene");
     }
 
@@ -41,7 +41,7 @@ public class LobbyUIManager : MonoBehaviour
             return;
         }
 
-        NetworkManager.network.JoinRoom(roomName.text);
+        NetworkManager.Instance.JoinRoom(roomName.text);
         SceneManager.LoadScene("RoomScene");
     }
 }

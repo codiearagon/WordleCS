@@ -13,12 +13,13 @@ public class Network
     private Socket clientSocket = new Socket
         (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-    private Action<RoomData> pendingRoomDataCallback;
+    public event Action<string> OnMessageReceived;
     
     public void ConnectToServer()
     {
         clientSocket.Connect(ADDRESS, PORT);
  	    Debug.Log("Connected to Server");
+
         Thread thread = new Thread(ReceivingLoop);
         thread.IsBackground = true;
         thread.Start();
@@ -37,7 +38,7 @@ public class Network
                     break;
                 }
 
-                HandleServerMessage(message);
+                OnMessageReceived?.Invoke(message);
             }
         } 
         catch (SocketException)
@@ -46,65 +47,13 @@ public class Network
         }
     }
 
-    public void HandleServerMessage(string message)
+    public void SendMessage(string message)
     {
-        string[] parts = message.Split(';');
-        Debug.Log(String.Format("Received message: {0}", parts[0]));
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        byte[] dataSize = BitConverter.GetBytes(data.Length);
 
-        switch (parts[0]) 
-        {
-            case "get_room_data":
-                RoomData roomData = new RoomData();
-                roomData.roomName = parts[1];
-                roomData.hostId = int.Parse(parts[2]);
-                int playerCount = int.Parse(parts[3]);
-
-                for(int i = 0; i < playerCount; i++)
-                {
-                    Player newPlayer = new Player();
-                    newPlayer.SetUsername(parts[i + 4]);
-                    newPlayer.userId = int.Parse(parts[i + 5]);
-                    newPlayer.isReady = bool.Parse(parts[i + 6]);
-
-                    roomData.players.Add(newPlayer);
-                }
-
-                pendingRoomDataCallback?.Invoke(roomData);
-
-                pendingRoomDataCallback = null;
-
-                break;
-            default:
-                Debug.Log("Unrecognized message");
-                break;
-        }
-
-    }
-
-    public void SetUsername(string name)
-    {
-        SendMessage(String.Format("set_username;{0}", name));
-    }
-
-    public void CreateRoom(string roomName)
-    {
-        SendMessage(String.Format("create_room;{0}", roomName));
-    }
-
-    public void JoinRoom(string roomName)
-    {
-        SendMessage(String.Format("join_room;{0}", roomName));
-    }
-
-    public void LeaveRoom()
-    {
-        SendMessage("leave_room");
-    }
-
-    public void GetRoomData(Action<RoomData> callback)
-    {
-        pendingRoomDataCallback = callback;
-        SendMessage("get_room_data");
+        SendAllData(dataSize);
+        SendAllData(data);
     }
 
     //-----------------------------socket helper functions below--------------------------------
@@ -138,15 +87,6 @@ public class Network
         }
 
         return buffer;
-    }
-
-    private void SendMessage(string message)
-    {
-        byte[] data = Encoding.UTF8.GetBytes(message);
-        byte[] dataSize = BitConverter.GetBytes(data.Length);
-
-        SendAllData(dataSize);
-        SendAllData(data);
     }
 
     private void SendAllData(byte[] data)

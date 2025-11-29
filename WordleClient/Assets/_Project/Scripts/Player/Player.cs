@@ -7,6 +7,6 @@ public class Player
     public void SetUsername(string username)
     {
         this.username = username;
-        NetworkManager.network.SetUsername(username);
+        NetworkManager.Instance.SetUsername(username);
     }
 }
