@@ -97,6 +97,7 @@ namespace WordleServer
                     LeaveRoom(player);
                     break;
                 case "get_room_data":
+                    Console.WriteLine("Received request for room data");
                     GetRoomData(player);
                     break;
             }
@@ -140,12 +141,16 @@ namespace WordleServer
 
         private static void GetRoomData(Player sender)
         {
-            string message = String.Format("get_room_data;{0};{1}", sender.room.roomName, sender.room.hostId);
-            foreach(Player player in sender.room.players) 
+            string message = String.Format("get_room_data;{0};{1};{2};", sender.room?.roomName, sender.room?.hostId, sender.room?.players.Count);
+
+            for(int i = 0; i < sender.room?.players.Count; i++)
             {
-                message += String.Format("{0};{1};", player.playerName, player.isReady);
+                Player player = sender.room.players[i];
+                message += String.Format("{0};{1};{2}", player.playerName, player.userId, player.isReady);
             }
 
+            IPEndPoint clientEndPoint = (IPEndPoint)sender.socket.RemoteEndPoint;
+            Console.WriteLine("Writing back to {0}:{1}...{2}", clientEndPoint.Address.ToString(), clientEndPoint.Port, message);
             sender.SendMessage(message);
         }
     }

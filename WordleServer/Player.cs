@@ -41,7 +41,7 @@ namespace WordleServer
 
         public void LeaveRoom()
         {
-            room.RemovePlayer(this);
+            room?.RemovePlayer(this);
         }
 
         public string ReceiveString()

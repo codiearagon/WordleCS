@@ -1,6 +1,7 @@
 using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -11,15 +12,72 @@ public class Network
 
     private Socket clientSocket = new Socket
         (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+    private Action<RoomData> pendingRoomDataCallback;
     
     public void ConnectToServer()
     {
         clientSocket.Connect(ADDRESS, PORT);
  	    Debug.Log("Connected to Server");
+        Thread thread = new Thread(ReceivingLoop);
+        thread.IsBackground = true;
+        thread.Start();
+    }
+
+    public void ReceivingLoop()
+    {
+        try
+        {
+            while (true)
+            {
+                string message = ReceiveString();
+                if (message == null)
+                {
+                    Debug.Log("Client disconnected.");
+                    break;
+                }
+
+                HandleServerMessage(message);
+            }
+        } 
+        catch (SocketException)
+        {
+            Debug.LogError("Disconnected unexpectedly");
+        }
     }
 
     public void HandleServerMessage(string message)
     {
+        string[] parts = message.Split(';');
+        Debug.Log(String.Format("Received message: {0}", parts[0]));
+
+        switch (parts[0]) 
+        {
+            case "get_room_data":
+                RoomData roomData = new RoomData();
+                roomData.roomName = parts[1];
+                roomData.hostId = int.Parse(parts[2]);
+                int playerCount = int.Parse(parts[3]);
+
+                for(int i = 0; i < playerCount; i++)
+                {
+                    Player newPlayer = new Player();
+                    newPlayer.SetUsername(parts[i + 4]);
+                    newPlayer.userId = int.Parse(parts[i + 5]);
+                    newPlayer.isReady = bool.Parse(parts[i + 6]);
+
+                    roomData.players.Add(newPlayer);
+                }
+
+                pendingRoomDataCallback?.Invoke(roomData);
+
+                pendingRoomDataCallback = null;
+
+                break;
+            default:
+                Debug.Log("Unrecognized message");
+                break;
+        }
 
     }
 
@@ -43,8 +101,9 @@ public class Network
         SendMessage("leave_room");
     }
 
-    public void GetRoomData()
+    public void GetRoomData(Action<RoomData> callback)
     {
+        pendingRoomDataCallback = callback;
         SendMessage("get_room_data");
     }
 
@@ -52,9 +111,14 @@ public class Network
     private string ReceiveString()
     {
         byte[] dataLength = ReceiveAllData(4);
+        if(dataLength == null)
+            return null;
+
         int length = BitConverter.ToInt32(dataLength, 0);
 
         byte[] message = ReceiveAllData(length);
+        if(message == null) 
+            return null;
 
         return Encoding.UTF8.GetString(message);
     }
@@ -67,11 +131,10 @@ public class Network
         while (totalReceived < size)
         {
             int bytesReceived = clientSocket.Receive(buffer, totalReceived, size - totalReceived, SocketFlags.None);
-            if (bytesReceived > 0)
-            {
-                totalReceived += bytesReceived;
-                continue;
-            }
+            if (bytesReceived == 0)
+                return null;
+
+            totalReceived += bytesReceived;
         }
 
         return buffer;
