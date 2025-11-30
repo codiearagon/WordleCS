@@ -971,6 +971,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760b04bc4e8202b46a408063dfa2b9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomUIManager
+  playerListObject: {fileID: 1459034938}
+  playerListPrefab: {fileID: 3843875726487884967, guid: fa5a643c98f3ede40bb0bc06153bd215, type: 3}
+  roomNameText: {fileID: 909638395}
+  hostIdText: {fileID: 516925648}
 --- !u!1 &1389615007
 GameObject:
   m_ObjectHideFlags: 0
