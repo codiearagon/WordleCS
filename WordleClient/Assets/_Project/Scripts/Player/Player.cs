@@ -4,7 +4,7 @@ public class Player
     public int userId { get; private set; }
     public bool isReady;
 
-    public int guessCount {get; private set; }
+    public int guessCount { get; private set; } = 0;
 
     public void SetUsername(string username)
     {

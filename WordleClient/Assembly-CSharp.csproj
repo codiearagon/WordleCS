@@ -63,13 +63,14 @@
   <ItemGroup>
     <Compile Include="Assets\_Project\Scripts\Player\Player.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\StartUIManager.cs" />
-    <Compile Include="Assets\_Project\Scripts\WordleGame.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\KeyButton.cs" />
     <Compile Include="Assets\_Project\Scripts\Player\PlayerManager.cs" />
     <Compile Include="Assets\_Project\Scripts\UnityMainThreadDispatcher.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\RoomUIManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\WordleTable.cs" />
     <Compile Include="Assets\_Project\Scripts\Networking\NetworkManager.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\LobbyUIManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\UI\Keyboard.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\WordRow.cs" />
     <Compile Include="Assets\_Project\Scripts\Networking\Network.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\GameUIManager.cs" />

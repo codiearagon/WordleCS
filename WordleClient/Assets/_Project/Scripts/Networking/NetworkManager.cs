@@ -13,7 +13,7 @@ public class NetworkManager : MonoBehaviour
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
     public static event Action OnStartGame;
-    public static event Action<Dictionary<int, LetterResult>> OnMakeGuess;
+    public static event Action<int, int, Dictionary<int, LetterResult>> OnMakeGuess;
 
     void Awake()
     {
@@ -42,7 +42,7 @@ public class NetworkManager : MonoBehaviour
     private void HandleServerMessage(string message)
     {
         string[] parts = message.Split(';');
-        Debug.Log(String.Format("Received message: {0}", parts[0]));
+        Debug.Log(String.Format("Received message: {0}", message));
 
         switch (parts[0])
         {
@@ -65,7 +65,6 @@ public class NetworkManager : MonoBehaviour
                 Debug.Log("Unrecognized message");
                 break;
         }
-
     }
 
     // Highly inefficient but should be fine for this project
@@ -102,7 +101,22 @@ public class NetworkManager : MonoBehaviour
 
     private void HandleOnMakeGuess(string[] parts)
     {
+        int userId = int.Parse(parts[1]);
+        int guessCount = int.Parse(parts[2]);
+        Dictionary<int, LetterResult> letterResults = new Dictionary<int, LetterResult>();
 
+        // all words are 5 letters
+        for(int i = 0; i < 5; i++)
+        {
+            if (parts[i * 2 + 4] == "correct")
+                letterResults.Add(i, LetterResult.CORRECT);
+            else if (parts[i * 2 + 4] == "incorrect")
+                letterResults.Add(i, LetterResult.INCORRECT);
+            else if (parts[i * 2 + 4] == "wrong_pos")
+                letterResults.Add(i, LetterResult.WRONG_POS);
+        }
+
+        OnMakeGuess?.Invoke(userId, guessCount, letterResults);
     }
 
     public void ConnectToServer()
@@ -148,7 +162,7 @@ public class NetworkManager : MonoBehaviour
 
     public void MakeGuess(string word)
     {
-        network.SendMessage(String.Format("make_guess;{0}", word));
+        network.SendMessage(String.Format("make_guess;{0}", word.ToLower()));
     }
          
     public RoomData GetRoomData() => latestRoomData;

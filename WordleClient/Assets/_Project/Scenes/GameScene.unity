@@ -662,8 +662,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -1342,8 +1342,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -2431,8 +2431,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -2949,6 +2949,7 @@ GameObject:
   m_Component:
   - component: {fileID: 369469264}
   - component: {fileID: 369469265}
+  - component: {fileID: 369469266}
   m_Layer: 5
   m_Name: Keyboard
   m_TagString: Untagged
@@ -3004,6 +3005,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &369469266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369469263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adcfd0f395e108d40a9e4f529f9a7770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Keyboard
+  wordleTable: {fileID: 888224562}
 --- !u!1 &369654466
 GameObject:
   m_ObjectHideFlags: 0
@@ -3169,8 +3183,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -3353,8 +3367,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -3748,8 +3762,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -6552,8 +6566,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -7698,8 +7712,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -7845,8 +7859,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -8257,8 +8271,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: RemoveLetter
         m_Mode: 1
         m_Arguments:
@@ -8404,8 +8418,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -8979,8 +8993,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -9238,8 +9252,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -9824,8 +9838,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -10392,8 +10406,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -10923,8 +10937,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -12216,8 +12230,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -12467,8 +12481,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -12614,8 +12628,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -12761,8 +12775,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -13316,8 +13330,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -14187,8 +14201,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -14334,8 +14348,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -14790,8 +14804,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -15110,8 +15124,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: Submit
         m_Mode: 1
         m_Arguments:
@@ -15820,8 +15834,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -16178,8 +16192,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:
@@ -16648,8 +16662,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 888224566}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+      - m_Target: {fileID: 369469266}
+        m_TargetAssemblyTypeName: Keyboard, Assembly-CSharp
         m_MethodName: AddLetter
         m_Mode: 5
         m_Arguments:

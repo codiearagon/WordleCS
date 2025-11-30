@@ -195,10 +195,10 @@ namespace WordleServer
                 player.room.AddResult(player.userId, player.guessCount);
             }
 
-            string message = String.Format("make_guess;{0};", player.userId);
+            string message = String.Format("make_guess;{0};{1};", player.userId, player.guessCount);
 
             // create a message of letter correctness then broadcast
-            for (int i = 0; i <= guessWord.Length; i++)
+            for (int i = 0; i < guessWord.Length; i++)
             {
                 if (player.room.word.Contains(guessWord[i]))
                 {

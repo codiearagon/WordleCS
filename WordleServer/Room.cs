@@ -25,6 +25,7 @@ namespace WordleServer
             players.Add(host);
             host.SetRoom(this);
             hostId = host.userId;
+            word = "codie";
 
             Console.WriteLine("Successfully created {0} room", roomName);
         }
