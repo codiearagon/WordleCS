@@ -9,7 +9,7 @@ public enum LetterResult
 
 public class WordleTable : MonoBehaviour
 {
-    public event Action<Dictionary<string, LetterResult>> OnLetterChecked;
+    public event Action<List<(string key, LetterResult lr)>> OnLetterChecked;
 
     private List<GameObject> wordRows = new List<GameObject>();
 
@@ -38,7 +38,7 @@ public class WordleTable : MonoBehaviour
         if (userId != PlayerManager.player.userId)
             return;
 
-        Dictionary<string, LetterResult> letterDict = new Dictionary<string, LetterResult>();
+        List<(string, LetterResult)> letterDict = new List<(string, LetterResult)>();
 
         UnityMainThreadDispatcher.Instance.Enqueue(() =>
         {
@@ -52,17 +52,17 @@ public class WordleTable : MonoBehaviour
                 if (pair.Value == LetterResult.CORRECT)
                 {
                     row.letterBg[pair.Key].color = Color.softGreen;
-                    letterDict.Add(row.letters[pair.Key].text, LetterResult.CORRECT);
+                    letterDict.Add((row.letters[pair.Key].text, LetterResult.CORRECT));
                 }
                 else if (pair.Value == LetterResult.WRONG_POS)
                 {
                     row.letterBg[pair.Key].color = Color.softYellow;
-                    letterDict.Add(row.letters[pair.Key].text, LetterResult.WRONG_POS);
+                    letterDict.Add((row.letters[pair.Key].text, LetterResult.WRONG_POS));
                 }
                 else
                 {
                     row.letterBg[pair.Key].color = Color.darkGray;
-                    letterDict.Add(row.letters[pair.Key].text, LetterResult.INCORRECT);
+                    letterDict.Add((row.letters[pair.Key].text, LetterResult.INCORRECT));
                 }
             }
 

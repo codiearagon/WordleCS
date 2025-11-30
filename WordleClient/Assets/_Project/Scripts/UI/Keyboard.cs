@@ -37,17 +37,17 @@ public class Keyboard : MonoBehaviour
         canType = true;
     }
 
-    private void HandleLetterChecked(Dictionary<string, LetterResult> letterDict)
+    private void HandleLetterChecked(List<(string, LetterResult)> letterDict)
     {
         TMP_Text[] letters = GetComponentsInChildren<TMP_Text>();
 
-        foreach (KeyValuePair<string, LetterResult> pair in letterDict)
+        foreach ((string key, LetterResult lr) in letterDict)
         {
             foreach (TMP_Text l in letters) 
             {
-                if(l.text == pair.Key)
+                if(l.text == key)
                 {
-                    switch (pair.Value)
+                    switch (lr)
                     {
                         case LetterResult.CORRECT:
                             l.transform.parent.GetComponent<Image>().color = Color.softGreen;
@@ -97,7 +97,7 @@ public class Keyboard : MonoBehaviour
             Debug.Log(currentWord + " is not a word in the bank.");
             return;
         }
-        
+
         letterPos = 0;
         rowPos++;
 
