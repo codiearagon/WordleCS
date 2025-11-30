@@ -66,6 +66,7 @@
     <Compile Include="Assets\_Project\Scripts\WordleGame.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\KeyButton.cs" />
     <Compile Include="Assets\_Project\Scripts\Player\PlayerManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\UnityMainThreadDispatcher.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\RoomUIManager.cs" />
     <Compile Include="Assets\_Project\Scripts\Networking\NetworkManager.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\LobbyUIManager.cs" />

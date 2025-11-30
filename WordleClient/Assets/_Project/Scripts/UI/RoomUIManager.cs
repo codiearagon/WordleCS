@@ -34,32 +34,38 @@ public class RoomUIManager : MonoBehaviour
     void ProcessRoomData(RoomData roomData)
     {
         this.roomData = roomData;
-        roomNameText.text = "Room: " + roomData.roomName;
-        hostIdText.text = "Host: " + roomData.hostId.ToString();
 
-        if (PlayerManager.player.userId == roomData.hostId) 
+        // must be run on the main thread because
+        // we're interacting with UI
+        UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
-            startOrReadyButton.interactable = false;
-            startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Start Game";
-        } 
-        else
-        {
-            startOrReadyButton.interactable = true;
-            startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Ready";
-        }
+            roomNameText.text = "Room: " + roomData.roomName;
+            hostIdText.text = "Host: " + roomData.hostId.ToString();
 
-        foreach (Transform child in playerListObject.transform)
-        {
-            Destroy(child.gameObject);
-        }
+            if (PlayerManager.player.userId == roomData.hostId)
+            {
+                startOrReadyButton.interactable = false;
+                startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Start Game";
+            }
+            else
+            {
+                startOrReadyButton.interactable = true;
+                startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Ready";
+            }
 
-        foreach(Player player in roomData.players)
-        {
-            GameObject newPlayerList = Instantiate(playerListPrefab, Vector3.zero, Quaternion.identity, playerListObject.transform);
-            TMP_Text[] texts = newPlayerList.GetComponentsInChildren<TMP_Text>();
-            texts[0].text = player.username + "(" + player.userId + ")";
-            texts[1].text = player.isReady ? "Ready" : "Not Ready";
-        }
+            foreach (Transform child in playerListObject.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            foreach (Player player in roomData.players)
+            {
+                GameObject newPlayerList = Instantiate(playerListPrefab, Vector3.zero, Quaternion.identity, playerListObject.transform);
+                TMP_Text[] texts = newPlayerList.GetComponentsInChildren<TMP_Text>();
+                texts[0].text = player.username + "(" + player.userId + ")";
+                texts[1].text = player.isReady ? "Ready" : "Not Ready";
+            }
+        });
     }
 
     public void LeaveRoom()

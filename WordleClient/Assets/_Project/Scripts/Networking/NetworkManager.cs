@@ -59,6 +59,7 @@ public class NetworkManager : MonoBehaviour
     // Highly inefficient but should be fine for this project
     private void HandleOnRoomChanged(string message)
     {
+        Debug.Log(message);
         string[] parts = message.Split(';');
 
         RoomData roomData = new RoomData();
@@ -69,9 +70,9 @@ public class NetworkManager : MonoBehaviour
         for (int i = 0; i < playerCount; i++)
         {
             Player newPlayer = new Player();
-            newPlayer.SetUsername(parts[i + 4]);
-            newPlayer.SetUserId(int.Parse(parts[i + 5]));
-            newPlayer.isReady = bool.Parse(parts[i + 6]);
+            newPlayer.SetUsername(parts[i * 3 + 4]);
+            newPlayer.SetUserId(int.Parse(parts[i * 3 + 5]));
+            bool.TryParse(parts[i * 3 + 6], out newPlayer.isReady);
 
             roomData.players.Add(newPlayer);
         }
@@ -110,6 +111,7 @@ public class NetworkManager : MonoBehaviour
     public void LeaveRoom()
     {
         network.SendMessage("leave_room");
+        latestRoomData = null;
     }
 
     public void GetUserId()

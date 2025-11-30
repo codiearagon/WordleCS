@@ -150,7 +150,10 @@ namespace WordleServer
             RoomChanged(player.room);
 
             if (player.room.players.Count <= 0)
+            {
                 rooms.RemoveAll(r => r.roomName == player.room.roomName);
+                Console.WriteLine("Room disbanded");
+            }
         }
 
         private static void RoomChanged(Room room)
@@ -160,7 +163,7 @@ namespace WordleServer
             for(int i = 0; i < room.players.Count; i++)
             {
                 Player player = room.players[i];
-                message += String.Format("{0};{1};{2}", player.playerName, player.userId, player.isReady);
+                message += String.Format("{0};{1};{2};", player.playerName, player.userId, player.isReady);
             }
 
             room.BroadcastMessage(message);
