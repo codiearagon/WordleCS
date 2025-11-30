@@ -55,6 +55,9 @@ public class NetworkManager : MonoBehaviour
             case "start_game":
                 OnStartGame?.Invoke();
                 break;
+            case "make_guess":
+                HandleOnMakeGuess(parts);
+                break;
             case "game_state_changed":
                 HandleGameStateChanged(parts);
                 break;
@@ -93,6 +96,11 @@ public class NetworkManager : MonoBehaviour
     }
 
     private void HandleGameStateChanged(string[] parts)
+    {
+
+    }
+
+    private void HandleOnMakeGuess(string[] parts)
     {
 
     }

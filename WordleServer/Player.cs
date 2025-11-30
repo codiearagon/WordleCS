@@ -16,12 +16,15 @@ namespace WordleServer
         public Room? room { get; private set; }
         public bool isReady { get; private set; }
 
+        public int guessCount { get; private set; }
+
         public Player(Socket socket, int userId)
         {
             this.socket = socket;
             this.userId = userId;
             playerName = "";
             isReady = false;
+            guessCount = 0;
         }
 
         public void SetName(string name)
@@ -37,6 +40,11 @@ namespace WordleServer
         public void SetReady(bool value)
         {
             isReady = value;
+        }
+
+        public void SetGuessCount(int guessCount)
+        {
+            this.guessCount = guessCount;
         }
 
         public string ReceiveString()

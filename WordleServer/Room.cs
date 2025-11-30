@@ -14,6 +14,10 @@ namespace WordleServer
         public List<Player> players { get; private set; } = new List<Player>();
         public int hostId { get; private set; }
 
+        public string word { get; private set; }
+
+        public List<string> results { get; private set; } = new List<string>();
+
         public Room(Player host, string roomName)
         {
             this.roomName = roomName;
@@ -38,6 +42,21 @@ namespace WordleServer
             players.RemoveAll(p => p.userId == player.userId);
 
             Console.WriteLine("{0} left room {1}", player.userId, roomName);
+        }
+
+        public void SetWord(string word)
+        {
+            this.word = word;
+        }
+
+        public void AddResult(int userId, int guessCount)
+        {
+            results.Add(String.Format("{0};{1};", userId, guessCount));
+        }
+
+        public void ResetResults()
+        {
+            results.Clear();
         }
 
         public void BroadcastMessage(string message)

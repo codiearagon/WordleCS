@@ -108,6 +108,9 @@ namespace WordleServer
                 case "start_game":
                     player.room?.BroadcastMessage("start_game");
                     break;
+                case "make_guess":
+                    MakeGuess(player, parts[1]);
+                    break;
                 default:
                     Console.WriteLine("Unrecognized message");
                     break;
@@ -177,6 +180,38 @@ namespace WordleServer
             }
 
             room.BroadcastMessage(message);
+        }
+
+        private static void MakeGuess(Player player, string guessWord)
+        {
+            if (player.room == null)
+                return;
+
+            player.SetGuessCount(player.guessCount + 1);
+
+            // add player result to room, if lost or won
+            if(guessWord == player.room.word || player.guessCount >= 6)
+            {
+                player.room.AddResult(player.userId, player.guessCount);
+            }
+
+            string message = String.Format("make_guess;{0};", player.userId);
+
+            // create a message of letter correctness then broadcast
+            for (int i = 0; i <= guessWord.Length; i++)
+            {
+                if (player.room.word.Contains(guessWord[i]))
+                {
+                    if (player.room.word[i] == guessWord[i])
+                        message += String.Format("{0};correct;", i);
+                    else
+                        message += String.Format("{0};wrong_pos;", i);
+                }
+                else
+                    message += String.Format("{0};incorrect;", i);
+            }
+
+            player.room.BroadcastMessage(message);
         }
     }
 }
