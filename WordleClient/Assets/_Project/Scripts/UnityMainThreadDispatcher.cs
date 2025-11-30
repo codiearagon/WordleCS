@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class UnityMainThreadDispatcher : MonoBehaviour
 {
+    public static UnityMainThreadDispatcher Instance { get; private set; }
     private static readonly Queue<Action> actions = new Queue<Action>();
-    private static UnityMainThreadDispatcher _instance;
 
-    public static UnityMainThreadDispatcher Instance()
+    private void Awake()
     {
-        if(!_instance)
+        if(Instance != null)
         {
-            GameObject obj = new GameObject("MainThreadDispatcher");
-            _instance = obj.AddComponent<UnityMainThreadDispatcher>();
-            DontDestroyOnLoad(obj);
+            Destroy(gameObject);
+            return;
         }
 
-        return _instance;
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void Enqueue(Action action)

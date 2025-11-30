@@ -40,7 +40,7 @@ public class WordleTable : MonoBehaviour
 
         Dictionary<string, LetterResult> letterDict = new Dictionary<string, LetterResult>();
 
-        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
         {
             PlayerManager.player.SetGuessCount(guessCount);
 

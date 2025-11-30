@@ -39,7 +39,7 @@ public class RoomUIManager : MonoBehaviour
 
         // must be run on the main thread because
         // we're interacting with UI
-        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
         {
             roomNameText.text = "Room: " + roomData.roomName;
             hostIdText.text = "Host: " + roomData.hostId.ToString();
@@ -95,7 +95,7 @@ public class RoomUIManager : MonoBehaviour
 
     void ProcessStartGame()
     {
-        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
         {
             SceneManager.LoadScene("GameScene");
         });

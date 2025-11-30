@@ -56,7 +56,9 @@ public class Keyboard : MonoBehaviour
                             l.transform.parent.GetComponent<Image>().color = Color.darkGray;
                             break;
                         case LetterResult.WRONG_POS:
-                            l.transform.parent.GetComponent<Image>().color = Color.softYellow;
+                            // don't change color if already marked correct
+                            if (l.transform.parent.GetComponent<Image>().color != Color.softGreen)
+                                l.transform.parent.GetComponent<Image>().color = Color.softYellow;
                             break;
                     }
                 }
@@ -89,6 +91,13 @@ public class Keyboard : MonoBehaviour
         if (currentWord.Length < 5 || !canType)
             return;
 
+        // if not word
+        if (!WordBank.IsWord(currentWord.ToLower()))
+        {
+            Debug.Log(currentWord + " is not a word in the bank.");
+            return;
+        }
+        
         letterPos = 0;
         rowPos++;
 
