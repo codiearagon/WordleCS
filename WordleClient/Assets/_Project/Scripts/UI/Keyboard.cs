@@ -1,15 +1,27 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Keyboard : MonoBehaviour
 {
-    [SerializeField] private GameObject wordleTable;
+    [SerializeField] private WordleTable wordleTable;
     private List<GameObject> wordRows = new List<GameObject>();
 
     private bool canType;
     private int rowPos;
     private int letterPos;
     private string currentWord;
+
+    private void OnEnable()
+    {
+        wordleTable.OnLetterChecked += HandleLetterChecked;
+    }
+
+    private void OnDisable()
+    {
+        wordleTable.OnLetterChecked -= HandleLetterChecked;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -23,6 +35,33 @@ public class Keyboard : MonoBehaviour
         letterPos = 0;
         currentWord = "";
         canType = true;
+    }
+
+    private void HandleLetterChecked(Dictionary<string, LetterResult> letterDict)
+    {
+        TMP_Text[] letters = GetComponentsInChildren<TMP_Text>();
+
+        foreach (KeyValuePair<string, LetterResult> pair in letterDict)
+        {
+            foreach (TMP_Text l in letters) 
+            {
+                if(l.text == pair.Key)
+                {
+                    switch (pair.Value)
+                    {
+                        case LetterResult.CORRECT:
+                            l.transform.parent.GetComponent<Image>().color = Color.softGreen;
+                            break;
+                        case LetterResult.INCORRECT:
+                            l.transform.parent.GetComponent<Image>().color = Color.darkGray;
+                            break;
+                        case LetterResult.WRONG_POS:
+                            l.transform.parent.GetComponent<Image>().color = Color.softYellow;
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     public void AddLetter(string letter)

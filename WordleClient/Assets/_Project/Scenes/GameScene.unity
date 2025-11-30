@@ -2284,6 +2284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordTyping
   letters: []
+  letterBg: []
 --- !u!114 &281837015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3017,7 +3018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adcfd0f395e108d40a9e4f529f9a7770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Keyboard
-  wordleTable: {fileID: 888224562}
+  wordleTable: {fileID: 888224566}
 --- !u!1 &369654466
 GameObject:
   m_ObjectHideFlags: 0
@@ -3073,6 +3074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordTyping
   letters: []
+  letterBg: []
 --- !u!114 &369654469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8611,6 +8613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordTyping
   letters: []
+  letterBg: []
 --- !u!114 &1102818448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13900,6 +13903,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordTyping
   letters: []
+  letterBg: []
 --- !u!1 &1846200461
 GameObject:
   m_ObjectHideFlags: 0
@@ -13955,6 +13959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordTyping
   letters: []
+  letterBg: []
 --- !u!114 &1846200464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15242,6 +15247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordTyping
   letters: []
+  letterBg: []
 --- !u!114 &1973846278
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,6 +9,8 @@ public enum LetterResult
 
 public class WordleTable : MonoBehaviour
 {
+    public event Action<Dictionary<string, LetterResult>> OnLetterChecked;
+
     private List<GameObject> wordRows = new List<GameObject>();
 
     private void OnEnable()
@@ -35,20 +38,36 @@ public class WordleTable : MonoBehaviour
         if (userId != PlayerManager.player.userId)
             return;
 
+        Dictionary<string, LetterResult> letterDict = new Dictionary<string, LetterResult>();
+
         UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
             PlayerManager.player.SetGuessCount(guessCount);
 
             foreach (KeyValuePair<int, LetterResult> pair in result)
             {
+                WordRow row = wordRows[guessCount - 1].GetComponent<WordRow>();
+
                 // set letter bg color of previous guess according to correctness
                 if (pair.Value == LetterResult.CORRECT)
-                    wordRows[guessCount - 1].GetComponent<WordRow>().letterBg[pair.Key].color = Color.darkGreen;
+                {
+                    row.letterBg[pair.Key].color = Color.softGreen;
+                    letterDict.Add(row.letters[pair.Key].text, LetterResult.CORRECT);
+                }
                 else if (pair.Value == LetterResult.WRONG_POS)
-                    wordRows[guessCount - 1].GetComponent<WordRow>().letterBg[pair.Key].color = Color.softYellow;
+                {
+                    row.letterBg[pair.Key].color = Color.softYellow;
+                    letterDict.Add(row.letters[pair.Key].text, LetterResult.WRONG_POS);
+                }
                 else
-                    wordRows[guessCount - 1].GetComponent<WordRow>().letterBg[pair.Key].color = Color.darkGray;
+                {
+                    row.letterBg[pair.Key].color = Color.darkGray;
+                    letterDict.Add(row.letters[pair.Key].text, LetterResult.INCORRECT);
+                }
             }
+
+            // only player keyboard will be listening to this
+            OnLetterChecked?.Invoke(letterDict);
         });
     }
 }
