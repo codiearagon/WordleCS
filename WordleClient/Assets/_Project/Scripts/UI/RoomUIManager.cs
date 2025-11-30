@@ -2,6 +2,8 @@ using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class RoomUIManager : MonoBehaviour
 {
@@ -9,6 +11,9 @@ public class RoomUIManager : MonoBehaviour
     [SerializeField] private GameObject playerListPrefab;
     [SerializeField] private TMP_Text roomNameText;
     [SerializeField] private TMP_Text hostIdText;
+    [SerializeField] private Button startOrReadyButton;
+
+    private RoomData roomData;
 
     void OnEnable()
     {
@@ -28,10 +33,22 @@ public class RoomUIManager : MonoBehaviour
 
     void ProcessRoomData(RoomData roomData)
     {
+        this.roomData = roomData;
         roomNameText.text = "Room: " + roomData.roomName;
         hostIdText.text = "Host: " + roomData.hostId.ToString();
 
-        foreach(Transform child in playerListObject.transform)
+        if (PlayerManager.player.userId == roomData.hostId) 
+        {
+            startOrReadyButton.interactable = false;
+            startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Start Game";
+        } 
+        else
+        {
+            startOrReadyButton.interactable = true;
+            startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Ready";
+        }
+
+        foreach (Transform child in playerListObject.transform)
         {
             Destroy(child.gameObject);
         }
@@ -45,4 +62,14 @@ public class RoomUIManager : MonoBehaviour
         }
     }
 
+    public void LeaveRoom()
+    {
+        NetworkManager.Instance.LeaveRoom();
+        SceneManager.LoadScene("LobbyScene");
+    }
+
+    public void StartOrReady()
+    {
+        
+    }
 }

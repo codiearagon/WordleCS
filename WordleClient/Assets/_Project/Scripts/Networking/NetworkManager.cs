@@ -10,6 +10,7 @@ public class NetworkManager : MonoBehaviour
     private RoomData latestRoomData;
 
     public static event Action<RoomData> OnRoomDataUpdated;
+    public static event Action<int> OnUserIdReceived;
 
     void Awake()
     {
@@ -42,6 +43,9 @@ public class NetworkManager : MonoBehaviour
 
         switch (parts[0])
         {
+            case "get_user_id":
+                HandleGetUserId(message);
+                break;
             case "room_changed":
                 HandleOnRoomChanged(message);
                 break;
@@ -52,6 +56,7 @@ public class NetworkManager : MonoBehaviour
 
     }
 
+    // Highly inefficient but should be fine for this project
     private void HandleOnRoomChanged(string message)
     {
         string[] parts = message.Split(';');
@@ -65,7 +70,7 @@ public class NetworkManager : MonoBehaviour
         {
             Player newPlayer = new Player();
             newPlayer.SetUsername(parts[i + 4]);
-            newPlayer.userId = int.Parse(parts[i + 5]);
+            newPlayer.SetUserId(int.Parse(parts[i + 5]));
             newPlayer.isReady = bool.Parse(parts[i + 6]);
 
             roomData.players.Add(newPlayer);
@@ -73,6 +78,13 @@ public class NetworkManager : MonoBehaviour
 
         latestRoomData = roomData;
         OnRoomDataUpdated?.Invoke(roomData);
+    }
+
+    private void HandleGetUserId(string message)
+    {
+        string[] parts = message.Split(';');
+
+        OnUserIdReceived?.Invoke(int.Parse(parts[1]));
     }
 
     public void ConnectToServer()
@@ -100,5 +112,10 @@ public class NetworkManager : MonoBehaviour
         network.SendMessage("leave_room");
     }
 
+    public void GetUserId()
+    {
+        network.SendMessage("get_user_id");
+    }
+         
     public RoomData GetRoomData() => latestRoomData;
 }

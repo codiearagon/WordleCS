@@ -96,6 +96,9 @@ namespace WordleServer
                 case "leave_room":
                     LeaveRoom(player);
                     break;
+                case "get_user_id":
+                    player.SendMessage("get_user_id;" + player.userId);
+                    break;
                 default:
                     Console.WriteLine("Unrecognized message");
                     break;

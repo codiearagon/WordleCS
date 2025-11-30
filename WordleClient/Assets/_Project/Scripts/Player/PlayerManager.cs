@@ -17,4 +17,20 @@ public class PlayerManager : MonoBehaviour
 
         player = new Player();
     }
+
+    private void OnEnable()
+    {
+        NetworkManager.OnUserIdReceived += HandleUserId;
+    }
+
+    private void OnDisable()
+    {
+        NetworkManager.OnUserIdReceived -= HandleUserId;
+    }
+
+    private void HandleUserId(int userId)
+    {
+        player.SetUserId(userId);
+        Debug.Log("Received ID: " + userId);
+    }
 }
