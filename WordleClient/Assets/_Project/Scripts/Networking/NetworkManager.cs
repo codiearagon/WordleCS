@@ -11,6 +11,7 @@ public class NetworkManager : MonoBehaviour
 
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
+    public static event Action OnStartGame;
 
     void Awake()
     {
@@ -48,6 +49,9 @@ public class NetworkManager : MonoBehaviour
                 break;
             case "room_changed":
                 HandleOnRoomChanged(message);
+                break;
+            case "start_game":
+                OnStartGame?.Invoke();
                 break;
             default:
                 Debug.Log("Unrecognized message");
@@ -117,6 +121,16 @@ public class NetworkManager : MonoBehaviour
     public void GetUserId()
     {
         network.SendMessage("get_user_id");
+    }
+
+    public void ChangeReady()
+    {
+        network.SendMessage("change_ready");
+    }
+
+    public void StartGame()
+    {
+        network.SendMessage("start_game");
     }
          
     public RoomData GetRoomData() => latestRoomData;

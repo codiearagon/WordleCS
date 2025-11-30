@@ -99,6 +99,15 @@ namespace WordleServer
                 case "get_user_id":
                     player.SendMessage("get_user_id;" + player.userId);
                     break;
+                case "change_ready":
+                    player.SetReady(!player.isReady); // toggle ready
+
+                    if(player.room != null)
+                        RoomChanged(player.room); 
+                    break;
+                case "start_game":
+                    player.room?.BroadcastMessage("start_game");
+                    break;
                 default:
                     Console.WriteLine("Unrecognized message");
                     break;
@@ -118,6 +127,7 @@ namespace WordleServer
 
             Room newRoom = new Room(host, roomName);
             rooms.Add(newRoom);
+            host.SetReady(true); // host will always be ready
 
             RoomChanged(newRoom);
         }

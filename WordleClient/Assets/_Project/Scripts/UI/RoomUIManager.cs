@@ -18,6 +18,7 @@ public class RoomUIManager : MonoBehaviour
     void OnEnable()
     {
         NetworkManager.OnRoomDataUpdated += ProcessRoomData;
+        NetworkManager.OnStartGame += ProcessStartGame;
 
         // There is a slight timing window where OnEnable will be slower than
         // the server's reply after NetworkManager requests for RoomData on joining.
@@ -29,6 +30,7 @@ public class RoomUIManager : MonoBehaviour
     void OnDisable()
     {
         NetworkManager.OnRoomDataUpdated -= ProcessRoomData;
+        NetworkManager.OnStartGame -= ProcessStartGame;
     }
 
     void ProcessRoomData(RoomData roomData)
@@ -42,21 +44,10 @@ public class RoomUIManager : MonoBehaviour
             roomNameText.text = "Room: " + roomData.roomName;
             hostIdText.text = "Host: " + roomData.hostId.ToString();
 
-            if (PlayerManager.player.userId == roomData.hostId)
-            {
-                startOrReadyButton.interactable = false;
-                startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Start Game";
-            }
-            else
-            {
-                startOrReadyButton.interactable = true;
-                startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Ready";
-            }
-
+            // destroy all player listings and recreate them
+            // simplest method
             foreach (Transform child in playerListObject.transform)
-            {
                 Destroy(child.gameObject);
-            }
 
             foreach (Player player in roomData.players)
             {
@@ -64,7 +55,49 @@ public class RoomUIManager : MonoBehaviour
                 TMP_Text[] texts = newPlayerList.GetComponentsInChildren<TMP_Text>();
                 texts[0].text = player.username + "(" + player.userId + ")";
                 texts[1].text = player.isReady ? "Ready" : "Not Ready";
+                texts[1].color = player.isReady ? Color.darkGreen : Color.darkRed;
+
+                // if current iter player is the client, set their local ready variable
+                if (player.userId == PlayerManager.player.userId)
+                    PlayerManager.player.isReady = player.isReady;
             }
+
+            // --non host only--
+            if (PlayerManager.player.userId != roomData.hostId)
+            {
+                startOrReadyButton.interactable = false;
+                startOrReadyButton.GetComponentInChildren<TMP_Text>().text = PlayerManager.player.isReady ? "Unready" : "Ready";
+
+                // start a cooldown for toggling ready again
+                // to avoid flooding network with requests
+                StartCoroutine(ReadyToggleCooldown());
+            }
+
+            // --for host only--
+            // check if all players are ready and enable to start game
+            if (PlayerManager.player.userId == roomData.hostId)
+            {
+                startOrReadyButton.GetComponentInChildren<TMP_Text>().text = "Start Game";
+
+                foreach (Player player in roomData.players)
+                {
+                    if (!player.isReady)
+                    {
+                        startOrReadyButton.interactable = false;
+                        return;
+                    }
+                }
+
+                startOrReadyButton.interactable = true;
+            }
+        });
+    }
+
+    void ProcessStartGame()
+    {
+        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        {
+            SceneManager.LoadScene("GameScene");
         });
     }
 
@@ -76,6 +109,15 @@ public class RoomUIManager : MonoBehaviour
 
     public void StartOrReady()
     {
-        
+        if (PlayerManager.player.userId == roomData.hostId)
+            NetworkManager.Instance.StartGame();
+        else
+            NetworkManager.Instance.ChangeReady();
+    }
+
+    IEnumerator ReadyToggleCooldown()
+    {
+        yield return new WaitForSeconds(2f);
+        startOrReadyButton.interactable = true;
     }
 }
