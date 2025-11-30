@@ -39,11 +39,6 @@ namespace WordleServer
             isReady = value;
         }
 
-        public void LeaveRoom()
-        {
-            room?.RemovePlayer(this);
-        }
-
         public string ReceiveString()
         {
             byte[] dataLength = ReceiveAllData(4); // int byte size

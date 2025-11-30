@@ -57,7 +57,6 @@ namespace WordleServer
                     message = newPlayer.ReceiveString();
                     if (message == null)
                     {
-                        newPlayer.LeaveRoom();
                         Console.WriteLine("Client disconnected cleanly.");
                         break;
                     }
@@ -67,12 +66,13 @@ namespace WordleServer
             }
             catch (SocketException)
             {
-                newPlayer.LeaveRoom();
+                
                 Console.WriteLine("Client disconnected unexpectedly.");
             }
             finally
             {
                 client.Close();
+                LeaveRoom(newPlayer);
             }
         
         }
@@ -135,8 +135,15 @@ namespace WordleServer
 
         private static void LeaveRoom(Player player)
         {
-            player.room?.RemovePlayer(player);
-            player.SendMessage("status;Successfully joined room.");
+            if(player.room == null)
+                return;
+
+            player.room.RemovePlayer(player);
+
+            // Only send a status message to the client if not leaving in an unexpected dropped connection
+            if(player.socket.Connected)
+                player.SendMessage("status;Successfully left room.");
+
             RoomChanged(player.room);
 
             if (player.room.players.Count <= 0)

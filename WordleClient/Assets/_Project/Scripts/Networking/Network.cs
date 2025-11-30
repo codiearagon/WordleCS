@@ -25,6 +25,11 @@ public class Network
         thread.Start();
     }
 
+    public void CloseConnection()
+    {
+        clientSocket.Close();
+    }
+
     public void ReceivingLoop()
     {
         try
@@ -44,6 +49,10 @@ public class Network
         catch (SocketException)
         {
             Debug.LogError("Disconnected unexpectedly");
+        }
+        finally
+        {
+            clientSocket.Close();
         }
     }
 

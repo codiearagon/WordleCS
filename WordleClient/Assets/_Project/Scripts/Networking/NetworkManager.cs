@@ -32,6 +32,7 @@ public class NetworkManager : MonoBehaviour
     private void OnDisable()
     {
         network.OnMessageReceived -= HandleServerMessage;
+        network.CloseConnection();
     }
 
     private void HandleServerMessage(string message)
