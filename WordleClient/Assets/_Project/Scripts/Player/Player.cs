@@ -4,6 +4,8 @@ public class Player
     public int userId { get; private set; }
     public bool isReady;
 
+    public int guessCount {get; private set; }
+
     public void SetUsername(string username)
     {
         this.username = username;
@@ -12,5 +14,10 @@ public class Player
     public void SetUserId(int userId)
     {
         this.userId = userId;
+    }
+
+    public void SetGuessCount(int guessCount)
+    {
+        this.guessCount = guessCount;
     }
 }

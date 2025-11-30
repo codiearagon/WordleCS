@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class NetworkManager : MonoBehaviour
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
     public static event Action OnStartGame;
+    public static event Action<Dictionary<int, LetterResult>> OnMakeGuess;
 
     void Awake()
     {
@@ -45,13 +47,16 @@ public class NetworkManager : MonoBehaviour
         switch (parts[0])
         {
             case "get_user_id":
-                HandleGetUserId(message);
+                HandleGetUserId(parts);
                 break;
             case "room_changed":
-                HandleOnRoomChanged(message);
+                HandleOnRoomChanged(parts);
                 break;
             case "start_game":
                 OnStartGame?.Invoke();
+                break;
+            case "game_state_changed":
+                HandleGameStateChanged(parts);
                 break;
             default:
                 Debug.Log("Unrecognized message");
@@ -61,11 +66,8 @@ public class NetworkManager : MonoBehaviour
     }
 
     // Highly inefficient but should be fine for this project
-    private void HandleOnRoomChanged(string message)
+    private void HandleOnRoomChanged(string[] parts)
     {
-        Debug.Log(message);
-        string[] parts = message.Split(';');
-
         RoomData roomData = new RoomData();
         roomData.roomName = parts[1];
         roomData.hostId = int.Parse(parts[2]);
@@ -85,11 +87,14 @@ public class NetworkManager : MonoBehaviour
         OnRoomDataUpdated?.Invoke(roomData);
     }
 
-    private void HandleGetUserId(string message)
+    private void HandleGetUserId(string[] parts)
     {
-        string[] parts = message.Split(';');
-
         OnUserIdReceived?.Invoke(int.Parse(parts[1]));
+    }
+
+    private void HandleGameStateChanged(string[] parts)
+    {
+
     }
 
     public void ConnectToServer()
@@ -131,6 +136,11 @@ public class NetworkManager : MonoBehaviour
     public void StartGame()
     {
         network.SendMessage("start_game");
+    }
+
+    public void MakeGuess(string word)
+    {
+        network.SendMessage(String.Format("make_guess;{0}", word));
     }
          
     public RoomData GetRoomData() => latestRoomData;
