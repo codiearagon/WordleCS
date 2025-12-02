@@ -165,7 +165,7 @@ namespace WordleServer
             if (player.room.players.Count <= 0)
             {
                 rooms.RemoveAll(r => r.roomName == player.room.roomName);
-                Console.WriteLine("Room disbanded");
+                Console.WriteLine("{0} room disbanded, no players left.", player.room.roomName);
             }
         }
 
@@ -197,19 +197,58 @@ namespace WordleServer
 
             string message = String.Format("make_guess;{0};{1};", player.userId, player.guessCount);
 
-            // create a message of letter correctness then broadcast
+            Dictionary<char, int> actualWordCount = new Dictionary<char, int>();
+            Dictionary<int, string> correctness = new Dictionary<int, string>(); 
+            bool[] passed = new bool[guessWord.Length];
+
+            // check correct and incorrect letters
             for (int i = 0; i < guessWord.Length; i++)
             {
+
                 if (player.room.word.Contains(guessWord[i]))
                 {
+                    // mark as correct letter if in correct pos
                     if (player.room.word[i] == guessWord[i])
-                        message += String.Format("{0};correct;", i);
+                    {
+                        passed[i] = true;
+                        correctness[i] = "correct";
+                    }
                     else
-                        message += String.Format("{0};wrong_pos;", i);
+                    {
+                        if (!actualWordCount.ContainsKey(player.room.word[i]))
+                            actualWordCount[player.room.word[i]] = 0;
+                        actualWordCount[player.room.word[i]]++;
+                        correctness[i] = "";
+                    }
                 }
                 else
-                    message += String.Format("{0};incorrect;", i);
+                {
+                    if (!actualWordCount.ContainsKey(player.room.word[i]))
+                        actualWordCount[player.room.word[i]] = 0;
+                    actualWordCount[player.room.word[i]]++;
+                    passed[i] = true;
+                    correctness[i] = "incorrect";
+                }
+            }   
+
+            // mark correct letters but wrong position
+            for (int i = 0; i < guessWord.Length; i++)
+            {
+                if (passed[i])
+                    continue;
+
+                if (actualWordCount.ContainsKey(guessWord[i]) && actualWordCount[guessWord[i]] > 0)
+                {
+                    actualWordCount[guessWord[i]]--;
+                    correctness[i] = "wrong_pos";
+                }
+                else
+                    correctness[i] = "incorrect";
             }
+
+            // create final message
+            foreach(KeyValuePair<int, string> pair in correctness)
+                message += String.Format("{0};{1};", pair.Key, pair.Value);
 
             player.room.BroadcastMessage(message);
         }

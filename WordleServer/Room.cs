@@ -11,6 +11,7 @@ namespace WordleServer
     class Room
     {
         public string roomName { get; private set; }
+        public int maxPlayers { get; private set; }
         public List<Player> players { get; private set; } = new List<Player>();
         public int hostId { get; private set; }
 
@@ -21,13 +22,14 @@ namespace WordleServer
         public Room(Player host, string roomName)
         {
             this.roomName = roomName;
+            maxPlayers = 6;
 
             players.Add(host);
             host.SetRoom(this);
             hostId = host.userId;
             word = WordBank.GetRandomWord();
 
-            Console.WriteLine("Successfully created {0} room", roomName);
+            Console.WriteLine("{0}({1}) successfully created {2} room", host.playerName, host.userId, roomName);
         }
 
         public void AddPlayer(Player player) 
@@ -35,14 +37,14 @@ namespace WordleServer
             players.Add(player);
             player.SetRoom(this);
 
-            Console.WriteLine("{0} joined room {1}", player.userId, roomName);
+            Console.WriteLine("{0}({1}) joined room {2}", player.playerName, player.userId, roomName);
         }
 
         public void RemovePlayer(Player player)
         {
             players.RemoveAll(p => p.userId == player.userId);
 
-            Console.WriteLine("{0} left room {1}", player.userId, roomName);
+            Console.WriteLine("{0}({1}) left room {2}", player.playerName, player.userId, roomName);
         }
 
         public void SetWord(string word)
