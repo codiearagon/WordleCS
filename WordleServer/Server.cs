@@ -108,6 +108,9 @@ namespace WordleServer
                 case "start_game":
                     player.room?.BroadcastMessage("start_game");
                     break;
+                case "on_game_loaded":
+                    OnGameLoaded(player);
+                    break;
                 case "make_guess":
                     MakeGuess(player, parts[1]);
                     break;
@@ -180,6 +183,15 @@ namespace WordleServer
             }
 
             room.BroadcastMessage(message);
+        }
+
+        // this function is to ensure no one can start typing until everybody loads in
+        private static void OnGameLoaded(Player player)
+        {
+            if (player.room == null)
+                return;
+
+            player.room.BroadcastMessage(String.Format("on_game_loaded"));
         }
 
         private static void MakeGuess(Player player, string guessWord)

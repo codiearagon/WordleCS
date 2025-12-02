@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 public enum LetterResult
@@ -11,6 +12,8 @@ public class WordleTable : MonoBehaviour
 {
     public event Action<List<(string key, LetterResult lr)>> OnLetterChecked;
 
+    public Player player {  get; private set; }
+    private TMP_Text playerName;
     private List<GameObject> wordRows = new List<GameObject>();
 
     private void OnEnable()
@@ -28,21 +31,21 @@ public class WordleTable : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            wordRows.Add(child.gameObject);
+            if(child.GetComponent<WordRow>() != null)
+                wordRows.Add(child.gameObject);
         }
     }
 
     private void ProcessOnMakeGuess(int userId, int guessCount, Dictionary<int, LetterResult> result)
     {
-        // return if not local player
-        if (userId != PlayerManager.player.userId)
+        if (userId != player.userId)
             return;
 
         List<(string, LetterResult)> letterDict = new List<(string, LetterResult)>();
 
         UnityMainThreadDispatcher.Instance.Enqueue(() =>
         {
-            PlayerManager.player.SetGuessCount(guessCount);
+            player.SetGuessCount(guessCount);
 
             foreach (KeyValuePair<int, LetterResult> pair in result)
             {
@@ -69,5 +72,16 @@ public class WordleTable : MonoBehaviour
             // only player keyboard will be listening to this
             OnLetterChecked?.Invoke(letterDict);
         });
+    }
+
+    public void SetPlayer(Player player)
+    {
+        this.player = player;
+
+        if(player.userId != PlayerManager.player.userId)
+        {
+            playerName = GetComponentInChildren<TMP_Text>();
+            playerName.text = player.username;
+        }
     }
 }

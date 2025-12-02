@@ -13,8 +13,6 @@ public class RoomUIManager : MonoBehaviour
     [SerializeField] private TMP_Text hostIdText;
     [SerializeField] private Button startOrReadyButton;
 
-    private RoomData roomData;
-
     void OnEnable()
     {
         NetworkManager.OnRoomDataUpdated += ProcessRoomData;
@@ -35,7 +33,7 @@ public class RoomUIManager : MonoBehaviour
 
     void ProcessRoomData(RoomData roomData)
     {
-        this.roomData = roomData;
+        PlayerManager.currentRoom = roomData;
 
         // must be run on the main thread because
         // we're interacting with UI
@@ -109,7 +107,7 @@ public class RoomUIManager : MonoBehaviour
 
     public void StartOrReady()
     {
-        if (PlayerManager.player.userId == roomData.hostId)
+        if (PlayerManager.player.userId == PlayerManager.currentRoom.hostId)
             NetworkManager.Instance.StartGame();
         else
             NetworkManager.Instance.ChangeReady();

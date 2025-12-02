@@ -4,6 +4,7 @@ public class PlayerManager : MonoBehaviour
 {
     private static PlayerManager Instance;
     public static Player player;
+    public static RoomData currentRoom;
 
     void Awake()
     {

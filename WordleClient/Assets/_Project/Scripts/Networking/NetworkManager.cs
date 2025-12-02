@@ -9,10 +9,12 @@ public class NetworkManager : MonoBehaviour
     private static Network network;
 
     private RoomData latestRoomData;
+    private RoomData latestGameData;
 
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
     public static event Action OnStartGame;
+    public static event Action<RoomData> OnGameStateChanged;
     public static event Action<int, int, Dictionary<int, LetterResult>> OnMakeGuess;
 
     void Awake()
@@ -96,7 +98,11 @@ public class NetworkManager : MonoBehaviour
 
     private void HandleGameStateChanged(string[] parts)
     {
+        RoomData gameData = new RoomData();
 
+
+        latestGameData = gameData;
+        OnGameStateChanged?.Invoke(gameData);
     }
 
     private void HandleOnMakeGuess(string[] parts)
@@ -160,10 +166,16 @@ public class NetworkManager : MonoBehaviour
         network.SendMessage("start_game");
     }
 
+    public void GameLoaded()
+    {
+        network.SendMessage("on_game_loaded");
+    }
+
     public void MakeGuess(string word)
     {
         network.SendMessage(String.Format("make_guess;{0}", word.ToLower()));
     }
          
     public RoomData GetRoomData() => latestRoomData;
+    public RoomData GetGameData() => latestGameData;
 }
