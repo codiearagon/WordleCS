@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class GameUIManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class GameUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        EventSystem.current.sendNavigationEvents = false;
         localTable.SetPlayer(PlayerManager.player);
 
         foreach(Player p in PlayerManager.currentRoom.players)

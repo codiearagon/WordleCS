@@ -63,12 +63,8 @@ public class RoomUIManager : MonoBehaviour
             // --non host only--
             if (PlayerManager.player.userId != roomData.hostId)
             {
-                startOrReadyButton.interactable = false;
+                startOrReadyButton.interactable = true;
                 startOrReadyButton.GetComponentInChildren<TMP_Text>().text = PlayerManager.player.isReady ? "Unready" : "Ready";
-
-                // start a cooldown for toggling ready again
-                // to avoid flooding network with requests
-                StartCoroutine(ReadyToggleCooldown());
             }
 
             // --for host only--
@@ -111,11 +107,5 @@ public class RoomUIManager : MonoBehaviour
             NetworkManager.Instance.StartGame();
         else
             NetworkManager.Instance.ChangeReady();
-    }
-
-    IEnumerator ReadyToggleCooldown()
-    {
-        yield return new WaitForSeconds(2f);
-        startOrReadyButton.interactable = true;
     }
 }

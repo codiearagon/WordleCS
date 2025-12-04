@@ -27,7 +27,7 @@ namespace WordleServer
             players.Add(host);
             host.SetRoom(this);
             hostId = host.userId;
-            word = "paint";
+            word = WordBank.GetRandomWord();
 
             Console.WriteLine("{0}({1}) successfully created {2} room", host.playerName, host.userId, roomName);
         }
