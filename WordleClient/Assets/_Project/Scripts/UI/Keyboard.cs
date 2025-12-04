@@ -8,7 +8,6 @@ public class Keyboard : MonoBehaviour
     [SerializeField] private WordleTable wordleTable;
     private List<GameObject> wordRows = new List<GameObject>();
 
-    private bool canType;
     private int rowPos;
     private int letterPos;
     private string currentWord;
@@ -34,7 +33,6 @@ public class Keyboard : MonoBehaviour
         rowPos = 0;
         letterPos = 0;
         currentWord = "";
-        canType = true;
     }
 
     private void HandleLetterChecked(List<(string, LetterResult)> letterDict)
@@ -71,7 +69,7 @@ public class Keyboard : MonoBehaviour
 
     public void AddLetter(string letter)
     {
-        if (currentWord.Length >= 5 || !canType)
+        if (currentWord.Length >= 5 || PlayerManager.player.finished)
             return;
 
         currentWord += letter;
@@ -81,7 +79,7 @@ public class Keyboard : MonoBehaviour
 
     public void RemoveLetter()
     {
-        if (currentWord.Length == 0 || !canType)
+        if (currentWord.Length == 0 || PlayerManager.player.finished)
             return;
 
         letterPos--;
@@ -91,7 +89,7 @@ public class Keyboard : MonoBehaviour
 
     public void Submit()
     {
-        if (currentWord.Length < 5 || !canType)
+        if (currentWord.Length < 5 || PlayerManager.player.finished)
             return;
 
          //if not word
@@ -108,8 +106,5 @@ public class Keyboard : MonoBehaviour
         NetworkManager.Instance.MakeGuess(currentWord); // send word to server
 
         currentWord = "";
-
-        if (PlayerManager.player.guessCount >= 6)
-            canType = false;
     }
 }

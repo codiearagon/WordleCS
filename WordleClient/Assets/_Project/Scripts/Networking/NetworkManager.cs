@@ -10,12 +10,15 @@ public class NetworkManager : MonoBehaviour
 
     private RoomData latestRoomData;
     private RoomData latestGameData;
+    private Queue<Player> latestResults;
 
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
     public static event Action OnStartGame;
-    public static event Action<RoomData> OnGameStateChanged;
     public static event Action<int, int, Dictionary<int, LetterResult>> OnMakeGuess;
+    public static event Action OnFinishedGame;
+    public static event Action<Queue<Player>> OnReceivedResults;
+    public static event Action OnRestartGame;
 
     void Awake()
     {
@@ -60,8 +63,14 @@ public class NetworkManager : MonoBehaviour
             case "make_guess":
                 HandleOnMakeGuess(parts);
                 break;
-            case "game_state_changed":
-                HandleGameStateChanged(parts);
+            case "game_finished":
+                OnFinishedGame?.Invoke();
+                break;
+            case "results":
+                HandleOnReceivedResults(parts);
+                break;
+            case "restart_game":
+                OnRestartGame?.Invoke();
                 break;
             default:
                 Debug.Log("Unrecognized message");
@@ -96,15 +105,6 @@ public class NetworkManager : MonoBehaviour
         OnUserIdReceived?.Invoke(int.Parse(parts[1]));
     }
 
-    private void HandleGameStateChanged(string[] parts)
-    {
-        RoomData gameData = new RoomData();
-
-
-        latestGameData = gameData;
-        OnGameStateChanged?.Invoke(gameData);
-    }
-
     private void HandleOnMakeGuess(string[] parts)
     {
         int userId = int.Parse(parts[1]);
@@ -123,6 +123,26 @@ public class NetworkManager : MonoBehaviour
         }
 
         OnMakeGuess?.Invoke(userId, guessCount, letterResults);
+    }
+
+    private void HandleOnReceivedResults(string[] parts)
+    {
+        Queue<Player> results = new Queue<Player>();
+        List<Player> roomPlayers = PlayerManager.currentRoom.players;
+
+        for (int i = 0; i < roomPlayers.Count; i++)
+        {
+            int userId = int.Parse(parts[i + 1]);
+
+            foreach (Player player in roomPlayers) 
+            {
+                if(player.userId == userId)
+                    results.Enqueue(player);
+            }
+        }
+
+        latestResults = results;
+        OnReceivedResults?.Invoke(results);
     }
 
     public void ConnectToServer()
@@ -175,7 +195,14 @@ public class NetworkManager : MonoBehaviour
     {
         network.SendMessage(String.Format("make_guess;{0}", word.ToLower()));
     }
+
+    public void RestartGame()
+    {
+        network.SendMessage("restart_game");
+    }
          
     public RoomData GetRoomData() => latestRoomData;
     public RoomData GetGameData() => latestGameData;
+
+    public Queue<Player> GetResults() => latestResults;
 }

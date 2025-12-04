@@ -114,6 +114,9 @@ namespace WordleServer
                 case "make_guess":
                     MakeGuess(player, parts[1]);
                     break;
+                case "restart_game":
+                    RestartGame(player.room);
+                    break;
                 default:
                     Console.WriteLine("Unrecognized message");
                     break;
@@ -157,6 +160,7 @@ namespace WordleServer
             if(player.room == null)
                 return;
 
+            player.SetReady(false);
             player.room.RemovePlayer(player);
 
             // Only send a status message to the client if not leaving in an unexpected dropped connection
@@ -197,14 +201,21 @@ namespace WordleServer
         private static void MakeGuess(Player player, string guessWord)
         {
             if (player.room == null)
+            {
+                player.SendMessage("guess_error");
                 return;
+            }
 
             player.SetGuessCount(player.guessCount + 1);
 
             // add player result to room, if lost or won
-            if(guessWord == player.room.word || player.guessCount >= 6)
+            if (guessWord == player.room.word || player.guessCount >= 6)
             {
-                player.room.AddResult(player.userId, player.guessCount);
+                // if couldn't guess the word at last guess, make it 7 guesses to indicate loss
+                if (guessWord != player.room.word)
+                    player.SetGuessCount(player.guessCount + 1);
+
+                player.room.AddResult(player);
             }
 
             string message = String.Format("make_guess;{0};{1};", player.userId, player.guessCount);
@@ -263,6 +274,43 @@ namespace WordleServer
                 message += String.Format("{0};{1};", pair.Key, pair.Value);
 
             player.room.BroadcastMessage(message);
+
+            // everybody is done when finished count is equal to player count
+            if (player.room.finishedPlayers.Count == player.room.players.Count)
+                CheckResults(player.room);
+        }
+
+        private static void CheckResults(Room room)
+        {
+            // let the clients transition scenes first
+            room.BroadcastMessage("game_finished"); 
+
+            string message = "results;";
+
+            foreach (Player p in room.finishedPlayers) 
+                message += String.Format("{0};", p.userId);
+
+            room.BroadcastMessage(message);
+        }
+
+        private static void RestartGame(Room room)
+        {
+            if (room == null)
+                return;
+
+            room.ResetResults();
+            room.SetWord(WordBank.GetRandomWord());
+
+            foreach(Player p in room.players)
+            {
+                if (p.userId != room.hostId)
+                    p.SetReady(false);
+
+                p.SetGuessCount(0);
+            }
+
+            room.BroadcastMessage("restart_game");
+            RoomChanged(room);
         }
     }
 }

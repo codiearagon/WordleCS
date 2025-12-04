@@ -17,7 +17,7 @@ namespace WordleServer
 
         public string word { get; private set; }
 
-        public List<string> results { get; private set; } = new List<string>();
+        public List<Player> finishedPlayers { get; private set; } = new List<Player>();
 
         public Room(Player host, string roomName)
         {
@@ -27,7 +27,7 @@ namespace WordleServer
             players.Add(host);
             host.SetRoom(this);
             hostId = host.userId;
-            word = WordBank.GetRandomWord();
+            word = "paint";
 
             Console.WriteLine("{0}({1}) successfully created {2} room", host.playerName, host.userId, roomName);
         }
@@ -52,14 +52,17 @@ namespace WordleServer
             this.word = word;
         }
 
-        public void AddResult(int userId, int guessCount)
+        public void AddResult(Player player)
         {
-            results.Add(String.Format("{0};{1};", userId, guessCount));
+            finishedPlayers.Add(player);
+
+            // sorting by guess count
+            finishedPlayers.Sort((a, b) => a.guessCount.CompareTo(b.guessCount));
         }
 
         public void ResetResults()
         {
-            results.Clear();
+            finishedPlayers.Clear();
         }
 
         public void BroadcastMessage(string message)

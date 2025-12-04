@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -45,7 +46,21 @@ public class WordleTable : MonoBehaviour
 
         UnityMainThreadDispatcher.Instance.Enqueue(() =>
         {
+            // set guess count for this object's player and room's player object
             player.SetGuessCount(guessCount);
+            foreach(Player p in PlayerManager.currentRoom.players)
+            {
+                if(p.userId == userId)
+                    p.SetGuessCount(guessCount);
+            }
+
+            // if all letteres are correct or out of guesses, mark as finished
+            player.finished = result.Values.All(b => b == LetterResult.CORRECT) || guessCount >= 6;
+
+            // this part is simply so below code will work
+            // since 7 will break the code
+            if (guessCount > 6)
+                guessCount = 6;
 
             foreach (KeyValuePair<int, LetterResult> pair in result)
             {

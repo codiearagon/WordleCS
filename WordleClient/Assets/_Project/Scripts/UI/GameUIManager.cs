@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -8,16 +9,12 @@ public class GameUIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        NetworkManager.OnGameStateChanged += ProcessGameStateChanged;
-
-        RoomData lastUpdatedData = NetworkManager.Instance.GetRoomData();
-        if (lastUpdatedData != null)
-            ProcessGameStateChanged(lastUpdatedData);
+        NetworkManager.OnFinishedGame += ProcessFinishGame;
     }
 
     private void OnDisable()
     {
-        NetworkManager.OnGameStateChanged -= ProcessGameStateChanged;
+        NetworkManager.OnFinishedGame -= ProcessFinishGame;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,8 +34,11 @@ public class GameUIManager : MonoBehaviour
         NetworkManager.Instance.GameLoaded();
     }
 
-    private void ProcessGameStateChanged(RoomData gameData)
+    void ProcessFinishGame()
     {
-
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            SceneManager.LoadScene("ResultsScene");
+        });
     }
 }
