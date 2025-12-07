@@ -12,6 +12,7 @@ public class NetworkManager : MonoBehaviour
     private RoomData latestGameData;
     private Queue<Player> latestResults;
 
+    public static event Action<string, string> OnJoinRoom;
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
     public static event Action OnStartGame;
@@ -54,6 +55,9 @@ public class NetworkManager : MonoBehaviour
             case "get_user_id":
                 HandleGetUserId(parts);
                 break;
+            case "join_status":
+                HandleJoinStatus(parts);
+                break;
             case "room_changed":
                 HandleOnRoomChanged(parts);
                 break;
@@ -77,6 +81,15 @@ public class NetworkManager : MonoBehaviour
                 break;
         }
     }
+    private void HandleGetUserId(string[] parts)
+    {
+        OnUserIdReceived?.Invoke(int.Parse(parts[1]));
+    }
+
+    private void HandleJoinStatus(string[] parts)
+    {
+        OnJoinRoom?.Invoke(parts[1], parts[2]);
+    }
 
     // Highly inefficient but should be fine for this project
     private void HandleOnRoomChanged(string[] parts)
@@ -98,11 +111,6 @@ public class NetworkManager : MonoBehaviour
 
         latestRoomData = roomData;
         OnRoomDataUpdated?.Invoke(roomData);
-    }
-
-    private void HandleGetUserId(string[] parts)
-    {
-        OnUserIdReceived?.Invoke(int.Parse(parts[1]));
     }
 
     private void HandleOnMakeGuess(string[] parts)

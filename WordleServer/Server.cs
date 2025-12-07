@@ -147,12 +147,20 @@ namespace WordleServer
             {
                 if (room.roomName == roomName)
                 {
-                    room.AddPlayer(player);
-                    player.SendMessage("status;Successfully joined room.");
-                    RoomChanged(player.room);
+                    if (room.players.Count != room.maxPlayers)
+                    {
+                        room.AddPlayer(player);
+                        player.SendMessage("join_status;success;room exists");
+                        RoomChanged(player.room);
+                    }
+                    else
+                        player.SendMessage("join_status;failed;room is full");
+
                     return;
                 }
             }
+
+            player.SendMessage("join_status;failed;room doesn't exist");
         }
 
         private static void LeaveRoom(Player player)
