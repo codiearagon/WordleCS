@@ -71,4 +71,13 @@ public class GameUIManager : MonoBehaviour
             SceneManager.LoadScene("ResultsScene");
         });
     }
+
+    public void LeaveRoom()
+    {
+        PlayerManager.player.SetGuessCount(0);
+        PlayerManager.player.finished = false;
+
+        NetworkManager.Instance.LeaveRoom();
+        SceneManager.LoadScene("LobbyScene");
+    }
 }

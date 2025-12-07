@@ -177,6 +177,7 @@ namespace WordleServer
                 return;
 
             player.SetReady(false);
+            player.SetGuessCount(0);
             player.room.RemovePlayer(player);
 
             RoomChanged(player.room);

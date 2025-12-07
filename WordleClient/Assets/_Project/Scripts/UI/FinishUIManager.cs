@@ -76,6 +76,9 @@ public class FinishUIManager : MonoBehaviour
     
     public void LeaveRoom()
     {
+        PlayerManager.player.finished = false;
+        PlayerManager.player.SetGuessCount(0);
+
         NetworkManager.Instance.LeaveRoom();
         SceneManager.LoadScene("LobbyScene");
     }
