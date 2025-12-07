@@ -44,7 +44,7 @@ public class FinishUIManager : MonoBehaviour
                 Player player = results.Dequeue();
                 GameObject newPlace = Instantiate(playerPlacePrefab, transform.position, Quaternion.identity, playerList.transform);
 
-                if(player.guessCount <= 6)
+                if(player.guessCount <= 6 && player.guessCount >= 1)
                     newPlace.GetComponent<TMP_Text>().text = String.Format("{0}/6: {1}", player.guessCount, player.username);
                 else
                     newPlace.GetComponent<TMP_Text>().text = String.Format("X/6: {0}", player.username);

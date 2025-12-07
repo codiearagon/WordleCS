@@ -27,6 +27,12 @@ public class Network
 
     public void CloseConnection()
     {
+        if (clientSocket == null)
+            return;
+
+        if (!clientSocket.Connected)
+            return;
+        
         clientSocket.Close();
     }
 

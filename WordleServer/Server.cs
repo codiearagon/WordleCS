@@ -115,9 +115,6 @@ namespace WordleServer
                     player.room?.BroadcastMessage("start_game");
                     LobbyChanged();
                     break;
-                case "on_game_loaded":
-                    OnGameLoaded(player);
-                    break;
                 case "make_guess":
                     MakeGuess(player, parts[1]);
                     break;
@@ -184,6 +181,10 @@ namespace WordleServer
 
             RoomChanged(player.room);
 
+            // if player leaves in middle of game and everybody else is done, finish the game
+            if(player.room.inGame && player.room.finishedPlayers.Count == player.room.players.Count)
+                CheckResults(player.room);
+
             if (player.room.players.Count <= 0)
             {
                 rooms.RemoveAll(r => r.roomName == player.room.roomName);
@@ -194,20 +195,11 @@ namespace WordleServer
             LobbyChanged(); // update players in lobby with room player count
         }
 
-        // this function is to ensure no one can start typing until everybody loads in
-        private static void OnGameLoaded(Player player)
-        {
-            if (player.room == null)
-                return;
-
-            player.room.BroadcastMessage(String.Format("on_game_loaded"));
-        }
-
         private static void MakeGuess(Player player, string guessWord)
         {
             if (player.room == null)
             {
-                player.SendMessage("guess_error");
+                player.SendMessage("room_null");
                 return;
             }
 

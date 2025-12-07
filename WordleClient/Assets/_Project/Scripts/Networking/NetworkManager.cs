@@ -12,6 +12,7 @@ public class NetworkManager : MonoBehaviour
     private RoomData latestRoomData;
     private Queue<Player> latestResults;
 
+    public static event Action<string> OnUnexpected;
     public static event Action<List<RoomData>> OnLobbyChanged;
     public static event Action<string, string> OnCreateRoom;
     public static event Action<string, string> OnJoinRoom;
@@ -47,9 +48,14 @@ public class NetworkManager : MonoBehaviour
         network.CloseConnection();
     }
 
+    private void OnApplicationQuit()
+    {
+        network.CloseConnection();
+    }
+
     private void HandleServerMessage(string message)
     {
-        string[] parts = message.Split(';');
+        string[] parts = message.Split(';', StringSplitOptions.RemoveEmptyEntries);
         Debug.Log(String.Format("Received message: {0}", message));
 
         switch (parts[0])
@@ -85,7 +91,9 @@ public class NetworkManager : MonoBehaviour
                 OnRestartGame?.Invoke();
                 break;
             default:
-                Debug.Log("Unrecognized message");
+                OnUnexpected?.Invoke(""); // return to lobby scene, if in game
+                LeaveRoom();
+                OnUnexpected?.Invoke("Received unknown message from server"); // status message on lobby
                 break;
         }
     }
@@ -225,11 +233,6 @@ public class NetworkManager : MonoBehaviour
     public void StartGame()
     {
         network.SendMessage("start_game");
-    }
-
-    public void GameLoaded()
-    {
-        network.SendMessage("on_game_loaded");
     }
 
     public void MakeGuess(string word)

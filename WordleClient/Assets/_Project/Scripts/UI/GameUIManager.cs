@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -11,11 +12,15 @@ public class GameUIManager : MonoBehaviour
     private void OnEnable()
     {
         NetworkManager.OnFinishedGame += ProcessFinishGame;
+        NetworkManager.OnRoomDataUpdated += ProcessRoomData;
+        NetworkManager.OnUnexpected += ProcessOnUnexpected;
     }
 
     private void OnDisable()
     {
         NetworkManager.OnFinishedGame -= ProcessFinishGame;
+        NetworkManager.OnRoomDataUpdated -= ProcessRoomData;
+        NetworkManager.OnUnexpected -= ProcessOnUnexpected;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -32,8 +37,31 @@ public class GameUIManager : MonoBehaviour
                 newTable.GetComponent<WordleTable>().SetPlayer(p);
             }
         }
+    }
 
-        NetworkManager.Instance.GameLoaded();
+    void ProcessRoomData(RoomData roomData)
+    {
+        PlayerManager.currentRoom = roomData;
+
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            // destroy table of players no longer in room
+            foreach (Transform child in otherPlayers.transform)
+            {
+                if (!roomData.players.Any(p => p.userId == child.GetComponent<WordleTable>().player.userId))
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        });
+    }
+
+    void ProcessOnUnexpected(string message)
+    {
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            SceneManager.LoadScene("LobbyScene");
+        });
     }
 
     void ProcessFinishGame()

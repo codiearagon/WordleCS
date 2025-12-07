@@ -22,6 +22,7 @@ public class LobbyUIManager : MonoBehaviour
         NetworkManager.OnLobbyChanged += ProcessLobbyChanged;
         NetworkManager.OnCreateRoom += ProcessCreateStatus;
         NetworkManager.OnJoinRoom += ProcessJoinStatus;
+        NetworkManager.OnUnexpected += ProcessOnUnexpected;
 
         // There is a slight timing window where OnEnable will be slower than
         // the server's reply after NetworkManager requests for LobbyData on joining.
@@ -35,6 +36,7 @@ public class LobbyUIManager : MonoBehaviour
         NetworkManager.OnLobbyChanged -= ProcessLobbyChanged;
         NetworkManager.OnCreateRoom -= ProcessCreateStatus;
         NetworkManager.OnJoinRoom -= ProcessJoinStatus;
+        NetworkManager.OnUnexpected -= ProcessOnUnexpected;
     }
 
     void Start()
@@ -109,6 +111,14 @@ public class LobbyUIManager : MonoBehaviour
             });
         }
 
+    }
+
+    private void ProcessOnUnexpected(string message)
+    {
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            ShowStatus(message);
+        });
     }
 
     public void CreateRoom(TMP_InputField roomName)
