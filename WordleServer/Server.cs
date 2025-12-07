@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace WordleServer
             (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         private static List<Room> rooms = new List<Room>();
+        private static List<Player> players = new List<Player>();
 
         private static int userIdIncrement = 0;
 
@@ -47,7 +49,10 @@ namespace WordleServer
             Console.WriteLine("Accepted client: {0}:{1}", clientEndPoint?.Address.ToString(), clientEndPoint?.Port);
 
             Player newPlayer = new Player(client, userIdIncrement);
+            players.Add(newPlayer);
             userIdIncrement++;
+
+            newPlayer.SendMessage(GetLobbyData()); // as soon as player connects, send lobby data
 
             try
             {
@@ -66,12 +71,12 @@ namespace WordleServer
             }
             catch (SocketException)
             {
-                
                 Console.WriteLine("Client disconnected unexpectedly.");
             }
             finally
             {
                 client.Close();
+                players.RemoveAll(p => p.userId == newPlayer.userId);
                 LeaveRoom(newPlayer);
             }
         
@@ -106,7 +111,9 @@ namespace WordleServer
                         RoomChanged(player.room); 
                     break;
                 case "start_game":
+                    player.room?.SetInGame(true);
                     player.room?.BroadcastMessage("start_game");
+                    LobbyChanged();
                     break;
                 case "on_game_loaded":
                     OnGameLoaded(player);
@@ -129,7 +136,7 @@ namespace WordleServer
             {
                 if (room.roomName == roomName)
                 {
-                    host.SendMessage("status;Room name already exists");
+                    host.SendMessage("create_status;failed;room already exists");
                     return;
                 }
             }
@@ -137,8 +144,10 @@ namespace WordleServer
             Room newRoom = new Room(host, roomName);
             rooms.Add(newRoom);
             host.SetReady(true); // host will always be ready
+            host.SendMessage("create_status;success;created");
 
             RoomChanged(newRoom);
+            LobbyChanged(); // update players in lobby with new room
         }
 
         private static void JoinRoom(Player player, string roomName)
@@ -151,7 +160,9 @@ namespace WordleServer
                     {
                         room.AddPlayer(player);
                         player.SendMessage("join_status;success;room exists");
+
                         RoomChanged(player.room);
+                        LobbyChanged(); // update players in lobby with room player count
                     }
                     else
                         player.SendMessage("join_status;failed;room is full");
@@ -171,10 +182,6 @@ namespace WordleServer
             player.SetReady(false);
             player.room.RemovePlayer(player);
 
-            // Only send a status message to the client if not leaving in an unexpected dropped connection
-            if(player.socket.Connected)
-                player.SendMessage("status;Successfully left room.");
-
             RoomChanged(player.room);
 
             if (player.room.players.Count <= 0)
@@ -182,19 +189,9 @@ namespace WordleServer
                 rooms.RemoveAll(r => r.roomName == player.room.roomName);
                 Console.WriteLine("{0} room disbanded, no players left.", player.room.roomName);
             }
-        }
 
-        private static void RoomChanged(Room room)
-        {
-            string message = String.Format("room_changed;{0};{1};{2};", room.roomName, room.hostId, room.players.Count);
-
-            for(int i = 0; i < room.players.Count; i++)
-            {
-                Player player = room.players[i];
-                message += String.Format("{0};{1};{2};", player.playerName, player.userId, player.isReady);
-            }
-
-            room.BroadcastMessage(message);
+            player.SetRoom(null);
+            LobbyChanged(); // update players in lobby with room player count
         }
 
         // this function is to ensure no one can start typing until everybody loads in
@@ -308,6 +305,7 @@ namespace WordleServer
 
             room.ResetResults();
             room.SetWord(WordBank.GetRandomWord());
+            room.SetInGame(false);
 
             foreach(Player p in room.players)
             {
@@ -319,6 +317,43 @@ namespace WordleServer
 
             room.BroadcastMessage("restart_game");
             RoomChanged(room);
+            LobbyChanged();
+        }
+
+        private static void LobbyChanged()
+        {
+            string lobbyData = GetLobbyData();
+
+            foreach(Player p in players)
+            {
+                if(p.room == null) // only send to players in lobby (they are not in a room)
+                    p.SendMessage(lobbyData);
+            }
+        }
+
+        private static void RoomChanged(Room room)
+        {
+            string message = String.Format("room_changed;{0};{1};{2};", room.roomName, room.hostId, room.players.Count);
+
+            for (int i = 0; i < room.players.Count; i++)
+            {
+                Player player = room.players[i];
+                message += String.Format("{0};{1};{2};", player.playerName, player.userId, player.isReady);
+            }
+
+            room.BroadcastMessage(message);
+        }
+
+        private static string GetLobbyData()
+        {
+            string data = String.Format("lobby_changed;{0};", rooms.Count);
+
+            foreach(Room r in rooms)
+            {
+                data += String.Format("{0};{1};{2};", r.roomName, r.players.Count, r.inGame);
+            }
+
+            return data;
         }
     }
 }

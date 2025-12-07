@@ -14,6 +14,7 @@ namespace WordleServer
         public int maxPlayers { get; private set; }
         public List<Player> players { get; private set; } = new List<Player>();
         public int hostId { get; private set; }
+        public bool inGame { get; private set; }
 
         public string word { get; private set; }
 
@@ -27,6 +28,7 @@ namespace WordleServer
             players.Add(host);
             host.SetRoom(this);
             hostId = host.userId;
+            inGame = false;
             word = WordBank.GetRandomWord();
 
             Console.WriteLine("{0}({1}) successfully created {2} room", host.playerName, host.userId, roomName);
@@ -50,6 +52,11 @@ namespace WordleServer
         public void SetWord(string word)
         {
             this.word = word;
+        }
+
+        public void SetInGame(bool value)
+        {
+            inGame = value;
         }
 
         public void AddResult(Player player)

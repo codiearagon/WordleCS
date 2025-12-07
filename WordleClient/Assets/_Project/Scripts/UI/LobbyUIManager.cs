@@ -3,10 +3,15 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
 
 public class LobbyUIManager : MonoBehaviour
 {
+    [SerializeField] private GameObject roomListingPrefab;
+    [SerializeField] private GameObject roomListingParent;
     [SerializeField] private GameObject statusArea;
+    [SerializeField] private Button createButton;
     [SerializeField] private Button joinButton;
     [SerializeField] private TMP_Text nameText;
 
@@ -14,17 +19,75 @@ public class LobbyUIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        NetworkManager.OnLobbyChanged += ProcessLobbyChanged;
+        NetworkManager.OnCreateRoom += ProcessCreateStatus;
         NetworkManager.OnJoinRoom += ProcessJoinStatus;
+
+        // There is a slight timing window where OnEnable will be slower than
+        // the server's reply after NetworkManager requests for LobbyData on joining.
+        List<RoomData> lastUpdatedData = NetworkManager.Instance.GetLobbyData();
+        if (lastUpdatedData != null)
+            ProcessLobbyChanged(lastUpdatedData);
     }
 
     private void OnDisable()
     {
+        NetworkManager.OnLobbyChanged -= ProcessLobbyChanged;
+        NetworkManager.OnCreateRoom -= ProcessCreateStatus;
         NetworkManager.OnJoinRoom -= ProcessJoinStatus;
     }
 
     void Start()
     {
         nameText.text = PlayerManager.player.username;
+    }
+
+    private void ProcessLobbyChanged(List<RoomData> lobbyData)
+    {
+        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            foreach(Transform child in roomListingParent.transform)
+                Destroy(child.gameObject);
+
+            foreach (RoomData roomData in lobbyData)
+            {
+                GameObject roomListing = Instantiate(roomListingPrefab, Vector3.zero, Quaternion.identity, roomListingParent.transform);
+                roomListing.GetComponentInChildren<TMP_Text>().text = String.Format("{0};({1}/6)", roomData.roomName, roomData.playerCount);
+
+                // listing still shows but cannot be pressed if full or in game
+                if (roomData.playerCount >= 6)
+                {
+                    roomListing.GetComponentInChildren<TMP_Text>().text += ";(FULL)";
+                    roomListing.GetComponent<Button>().interactable = false;
+                }
+                else if (roomData.inGame)
+                {
+                    roomListing.GetComponent<Button>().interactable = false;
+                    roomListing.GetComponentInChildren<TMP_Text>().text += ";(IN GAME)";
+                }
+
+            }
+        });
+    }
+
+    private void ProcessCreateStatus(string status, string reason)
+    {
+        if (status == "failed")
+        {
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                ShowStatus("Failed to create: " + reason);
+                createButton.interactable = true;
+            });
+        } 
+        else
+        {
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                createButton.interactable = true;
+                SceneManager.LoadScene("RoomScene");
+            });
+        }
     }
 
     private void ProcessJoinStatus(string status, string reason)
@@ -61,7 +124,7 @@ public class LobbyUIManager : MonoBehaviour
         }
 
         NetworkManager.Instance.CreateRoom(roomName.text);
-        SceneManager.LoadScene("RoomScene");
+        createButton.interactable = false;
     }
 
     public void JoinRoom(TMP_InputField roomName)

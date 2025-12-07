@@ -32,7 +32,7 @@ namespace WordleServer
             playerName = name;
         }
 
-        public void SetRoom(Room room)
+        public void SetRoom(Room? room)
         {
             this.room = room;
         }

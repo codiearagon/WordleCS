@@ -17,7 +17,7 @@ public class FinishUIManager : MonoBehaviour
         NetworkManager.OnRestartGame += ProcessOnRestartGame;
 
         // There is a slight timing window where OnEnable will be slower than
-        // the server's reply after NetworkManager requests for RoomData on joining.
+        // the server's reply after NetworkManager requests for Results on joining.
         Queue<Player> lastUpdatedData = NetworkManager.Instance.GetResults();
         if (lastUpdatedData != null)
             ProcessOnReceivedResults(lastUpdatedData);

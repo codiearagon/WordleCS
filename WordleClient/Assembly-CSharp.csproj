@@ -77,6 +77,7 @@
     <Compile Include="Assets\_Project\Scripts\UI\GameUIManager.cs" />
     <Compile Include="Assets\_Project\Scripts\Networking\RoomData.cs" />
     <Compile Include="Assets\_Project\Scripts\UI\FinishUIManager.cs" />
+    <Compile Include="Assets\_Project\Scripts\UI\RoomListing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

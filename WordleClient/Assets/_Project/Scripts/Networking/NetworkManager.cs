@@ -8,10 +8,12 @@ public class NetworkManager : MonoBehaviour
     public static NetworkManager Instance;
     private static Network network;
 
+    private List<RoomData> latestLobbyData;
     private RoomData latestRoomData;
-    private RoomData latestGameData;
     private Queue<Player> latestResults;
 
+    public static event Action<List<RoomData>> OnLobbyChanged;
+    public static event Action<string, string> OnCreateRoom;
     public static event Action<string, string> OnJoinRoom;
     public static event Action<RoomData> OnRoomDataUpdated;
     public static event Action<int> OnUserIdReceived;
@@ -55,6 +57,12 @@ public class NetworkManager : MonoBehaviour
             case "get_user_id":
                 HandleGetUserId(parts);
                 break;
+            case "lobby_changed":
+                HandleLobbyChanged(parts);
+                break;
+            case "create_status":
+                HandleCreateStatus(parts);
+                break;
             case "join_status":
                 HandleJoinStatus(parts);
                 break;
@@ -86,6 +94,30 @@ public class NetworkManager : MonoBehaviour
         OnUserIdReceived?.Invoke(int.Parse(parts[1]));
     }
 
+    private void HandleLobbyChanged(string[] parts)
+    {
+        List<RoomData> lobbyData = new List<RoomData>();
+        int roomCount = int.Parse(parts[1]);
+
+        for(int i = 0; i < roomCount; i++)
+        {
+            RoomData roomData = new RoomData();
+            roomData.roomName = parts[i * 3 + 2];
+            roomData.playerCount = int.Parse(parts[i * 3 + 3]);
+            bool.TryParse(parts[i * 3 + 4], out roomData.inGame);
+
+            lobbyData.Add(roomData);
+        }
+
+        latestLobbyData = lobbyData;
+        OnLobbyChanged?.Invoke(lobbyData);
+    }
+
+    private void HandleCreateStatus(string[] parts)
+    {
+        OnCreateRoom?.Invoke(parts[1], parts[2]);
+    }
+
     private void HandleJoinStatus(string[] parts)
     {
         OnJoinRoom?.Invoke(parts[1], parts[2]);
@@ -107,10 +139,11 @@ public class NetworkManager : MonoBehaviour
             bool.TryParse(parts[i * 3 + 6], out newPlayer.isReady);
 
             roomData.players.Add(newPlayer);
+            roomData.playerCount = roomData.players.Count;
         }
 
         latestRoomData = roomData;
-        OnRoomDataUpdated?.Invoke(roomData);
+        OnRoomDataUpdated?.Invoke(latestRoomData);
     }
 
     private void HandleOnMakeGuess(string[] parts)
@@ -150,7 +183,7 @@ public class NetworkManager : MonoBehaviour
         }
 
         latestResults = results;
-        OnReceivedResults?.Invoke(results);
+        OnReceivedResults?.Invoke(latestResults);
     }
 
     public void ConnectToServer()
@@ -208,9 +241,8 @@ public class NetworkManager : MonoBehaviour
     {
         network.SendMessage("restart_game");
     }
-         
-    public RoomData GetRoomData() => latestRoomData;
-    public RoomData GetGameData() => latestGameData;
 
+    public List<RoomData> GetLobbyData() => latestLobbyData;
+    public RoomData GetRoomData() => latestRoomData;
     public Queue<Player> GetResults() => latestResults;
 }
