@@ -121,6 +121,14 @@ public class LobbyUIManager : MonoBehaviour
         });
     }
 
+    private void ShowStatus(string text)
+    {
+        if (statusCoroutine != null)
+            StopCoroutine(statusCoroutine);
+
+        statusCoroutine = StartCoroutine(ShowStatusBriefly(text));
+    }
+
     public void CreateRoom(TMP_InputField roomName)
     {
         if (string.IsNullOrEmpty(roomName.text))
@@ -154,12 +162,9 @@ public class LobbyUIManager : MonoBehaviour
         joinButton.interactable = false;
     }
 
-    private void ShowStatus(string text)
+    public void Disconnect()
     {
-        if (statusCoroutine != null)
-            StopCoroutine(statusCoroutine);
-
-        statusCoroutine = StartCoroutine(ShowStatusBriefly(text));
+        NetworkManager.Instance.Disconnect();
     }
 
     IEnumerator ShowStatusBriefly(string text)

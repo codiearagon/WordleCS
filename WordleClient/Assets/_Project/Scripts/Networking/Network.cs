@@ -14,26 +14,52 @@ public class Network
         (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
     public event Action<string> OnMessageReceived;
+
+    Thread receiveThread;
     
     public void ConnectToServer()
     {
         clientSocket.Connect(ADDRESS, PORT);
  	    Debug.Log("Connected to Server");
 
-        Thread thread = new Thread(ReceivingLoop);
-        thread.IsBackground = true;
-        thread.Start();
+        receiveThread = new Thread(ReceivingLoop);
+        receiveThread.IsBackground = true;
+        receiveThread.Start();
     }
 
-    public void CloseConnection()
+    public void CloseSocket()
     {
         if (clientSocket == null)
             return;
 
-        if (!clientSocket.Connected)
-            return;
-        
+        if (clientSocket.Connected)
+        {
+            try { clientSocket.Shutdown(SocketShutdown.Both); }
+            catch { }
+        }
+
+        try { clientSocket.Disconnect(false); }
+        catch { }
+
+        if(receiveThread != null && receiveThread.IsAlive)
+            receiveThread.Join();
+
         clientSocket.Close();
+    }
+
+    public void Disconnect()
+    {
+        if (clientSocket.Connected)
+        {
+            try { clientSocket.Shutdown(SocketShutdown.Both); }
+            catch { }
+        }
+
+        try { clientSocket.Disconnect(true); }
+        catch { }
+
+        if(receiveThread != null && receiveThread.IsAlive)
+            receiveThread.Join();
     }
 
     public void ReceivingLoop()
@@ -58,7 +84,16 @@ public class Network
         }
         finally
         {
-            clientSocket.Close();
+            if(clientSocket.Connected)
+            {
+                try { clientSocket.Shutdown(SocketShutdown.Both); }
+                catch { }
+            }
+            
+            try { clientSocket.Disconnect(true); }
+            catch { }
+
+            OnMessageReceived?.Invoke("disconnected");
         }
     }
 

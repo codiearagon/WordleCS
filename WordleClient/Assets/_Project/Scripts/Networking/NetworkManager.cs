@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -45,12 +46,11 @@ public class NetworkManager : MonoBehaviour
     private void OnDisable()
     {
         network.OnMessageReceived -= HandleServerMessage;
-        network.CloseConnection();
     }
 
     private void OnApplicationQuit()
     {
-        network.CloseConnection();
+        network.CloseSocket();
     }
 
     private void HandleServerMessage(string message)
@@ -89,6 +89,14 @@ public class NetworkManager : MonoBehaviour
                 break;
             case "restart_game":
                 OnRestartGame?.Invoke();
+                break;
+            case "disconnected":
+                UnityMainThreadDispatcher.Instance.Enqueue(() => 
+                {
+                    Destroy(PlayerManager.Instance.gameObject);
+                    Destroy(NetworkManager.Instance.gameObject);
+                    SceneManager.LoadScene("StartScene"); 
+                });
                 break;
             default:
                 OnUnexpected?.Invoke(""); // return to lobby scene, if in game
@@ -243,6 +251,11 @@ public class NetworkManager : MonoBehaviour
     public void RestartGame()
     {
         network.SendMessage("restart_game");
+    }
+
+    public void Disconnect()
+    {
+        network.Disconnect();
     }
 
     public List<RoomData> GetLobbyData() => latestLobbyData;
