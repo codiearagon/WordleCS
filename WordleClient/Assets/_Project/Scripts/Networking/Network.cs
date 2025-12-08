@@ -13,6 +13,7 @@ public class Network
         (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
     public event Action<string> OnMessageReceived;
+    public bool running = false;
 
     Thread receiveThread;
     
@@ -21,6 +22,7 @@ public class Network
         clientSocket.Connect(address, PORT);
  	    Debug.Log("Connected to Server");
 
+        running = true;
         receiveThread = new Thread(ReceivingLoop);
         receiveThread.IsBackground = true;
         receiveThread.Start();
@@ -28,6 +30,8 @@ public class Network
 
     public void CloseSocket()
     {
+        running = false;
+
         if (clientSocket == null)
             return;
 
@@ -48,6 +52,8 @@ public class Network
 
     public void Disconnect()
     {
+        running = false;
+
         if (clientSocket.Connected)
         {
             try { clientSocket.Shutdown(SocketShutdown.Both); }
@@ -65,13 +71,11 @@ public class Network
     {
         try
         {
-            while (true)
+            while (running)
             {
                 string message = ReceiveString();
-                if (message == null)
-                {
+                if (message == null || !running)
                     break;
-                }
 
                 OnMessageReceived?.Invoke(message);
             }
