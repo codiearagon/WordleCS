@@ -33,6 +33,7 @@ namespace WordleServer
             CreateServer(address);
         }
 
+        // This function will bind the socket and start listening indefinitely
         private static void CreateServer(string address)
         {
             IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(address), PORT);
@@ -51,6 +52,8 @@ namespace WordleServer
             }
         }
 
+        // This function is the thread callback function that handles a connected client
+        // This also contains the indefinite receiving of messages from the client
         private static void HandleClient(Socket client)
         {
             IPEndPoint clientEndPoint = (IPEndPoint)client.RemoteEndPoint;
@@ -83,6 +86,8 @@ namespace WordleServer
             }
             finally
             {
+                // ensure a player leaves the room when they disconnected
+                // regardless of clean or unexpected disconnection
                 client.Close();
                 players.RemoveAll(p => p.userId == newPlayer.userId);
                 LeaveRoom(newPlayer);
@@ -90,6 +95,8 @@ namespace WordleServer
         
         }
 
+        // This function handles the parsing of the client message
+        // Most of the cases lead to other functions but simpler once gets handle in here as well
         private static void HandleClientMessage(Player player, string message)
         {
             string[] parts = message.Split(';');
@@ -135,6 +142,10 @@ namespace WordleServer
             }
         }
 
+        // This function handles the creation of rooms which
+        // creates a new Room object, sets the name and host, then adds it to the rooms list object
+        // It notifies players in the room (only the host in this case) about the room data
+        // It also notifies players in the lobby about the new room
         private static void CreateRoom(Player host, string roomName)
         {
             foreach (Room room in rooms)
@@ -155,6 +166,10 @@ namespace WordleServer
             LobbyChanged(); // update players in lobby with new room
         }
 
+        // This function handles the joining of rooms which finds the Room object by name,
+        // then checks if it is full or in-game before sending a failed or success status to the client
+        // It notifies players in the room about the new player when successful
+        // It also notifies players in the lobby about the change in player count in this room when successful
         private static void JoinRoom(Player player, string roomName)
         {
             foreach (Room room in rooms)
@@ -181,6 +196,9 @@ namespace WordleServer
             player.SendMessage("join_status;failed;room doesn't exist");
         }
 
+        // This function handles the leaving of rooms, which deassociates players
+        // from their respective room objects. It will also delete the room if the last player leaves.
+        // This will also update the lobby about the changed player count
         private static void LeaveRoom(Player player)
         {
             if(player.room == null)
@@ -206,6 +224,10 @@ namespace WordleServer
             LobbyChanged(); // update players in lobby with room player count
         }
 
+        // This function handles the guess word sent by the client. It compares
+        // position by position the guess word and the room word and broadcasts
+        // the position's correctness to all the players in the room.
+        // When the last player makes finishes, it will move on to creating the results
         private static void MakeGuess(Player player, string guessWord)
         {
             if (player.room == null)
@@ -262,7 +284,7 @@ namespace WordleServer
                 }
             }   
 
-            // mark correct letters but wrong position
+            // mark correct letters with wrong position
             for (int i = 0; i < guessWord.Length; i++)
             {
                 if (passed[i])
@@ -288,6 +310,8 @@ namespace WordleServer
                 CheckResults(player.room);
         }
 
+        // This function will move all players in the room to the results scene
+        // This will also send the order of 
         private static void CheckResults(Room room)
         {
             // let the clients transition scenes first
