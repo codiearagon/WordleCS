@@ -311,7 +311,7 @@ namespace WordleServer
         }
 
         // This function will move all players in the room to the results scene
-        // This will also send the order of 
+        // This will also broadcast the order of players by guess count
         private static void CheckResults(Room room)
         {
             // let the clients transition scenes first
@@ -325,6 +325,8 @@ namespace WordleServer
             room.BroadcastMessage(message);
         }
 
+        // This function handles restarting games which simply
+        // involves resetting player and room variables
         private static void RestartGame(Room room)
         {
             if (room == null)
@@ -347,6 +349,8 @@ namespace WordleServer
             LobbyChanged();
         }
 
+        // This function handles sending lobby data to all
+        // players in the lobby
         private static void LobbyChanged()
         {
             string lobbyData = GetLobbyData();
@@ -358,6 +362,8 @@ namespace WordleServer
             }
         }
 
+        // This function handles sending room data to all
+        // players in a room
         private static void RoomChanged(Room room)
         {
             string message = String.Format("room_changed;{0};{1};{2};", room.roomName, room.hostId, room.players.Count);
@@ -371,6 +377,8 @@ namespace WordleServer
             room.BroadcastMessage(message);
         }
 
+        // This function handles creating a lobby changed
+        // string data that includes all room names, player counts, and in-game statuses
         private static string GetLobbyData()
         {
             string data = String.Format("lobby_changed;{0};", rooms.Count);

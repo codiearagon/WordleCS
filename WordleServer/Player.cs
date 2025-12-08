@@ -47,6 +47,9 @@ namespace WordleServer
             this.guessCount = guessCount;
         }
 
+        // This function is a general receive string function that first
+        // receives the size of the data being sent before receiving
+        // the actua
         public string ReceiveString()
         {
             byte[] dataLength = ReceiveAllData(4); // int byte size
@@ -61,35 +64,9 @@ namespace WordleServer
 
             return Encoding.UTF8.GetString(message);
         }
-
-        public byte[] ReceiveAllData(int size)
-        {
-            byte[] buffer = new byte[size];
-            
-            int totalReceived = 0;
-            while (totalReceived < size)
-            {
-                int bytesReceived = socket.Receive(buffer, totalReceived, size - totalReceived, SocketFlags.None);
-                if (bytesReceived == 0)
-                    return null;
-
-                totalReceived += bytesReceived;
-            }
-
-            return buffer;
-        }
-
-        public void SendInt(int num)
-        {
-            num = IPAddress.HostToNetworkOrder(num);
-            byte[] data = BitConverter.GetBytes(num);
-            int numSize = IPAddress.HostToNetworkOrder(sizeof(int));
-            byte[] dataSize = BitConverter.GetBytes(numSize);
-
-            SendAllData(dataSize);
-            SendAllData(data);
-        }
-
+        
+        // This function handles sending message for any string size
+        // by sending the size of the data first before sending the actual data
         public void SendMessage(string message)
         {
             byte[] data = Encoding.UTF8.GetBytes(message);
@@ -99,7 +76,10 @@ namespace WordleServer
             SendAllData(data);
         }
 
-        // helper functions
+        // --------------helper functions-------------------------
+        // This function handles socket send which iterates
+        // multiple times if needed until the total sent bytes is equal
+        // to the data size
         private void SendAllData(byte[] data)
         {
             int totalSent = 0;
@@ -115,6 +95,26 @@ namespace WordleServer
                 Console.WriteLine("Sent 0 bytes, connection could be lost.");
                 return;
             }
+        }
+
+        // This function handles socket receive which iterates
+        // multiple times if needed until the total received bytes is equal
+        // to the expected data size
+        private byte[] ReceiveAllData(int size)
+        {
+            byte[] buffer = new byte[size];
+
+            int totalReceived = 0;
+            while (totalReceived < size)
+            {
+                int bytesReceived = socket.Receive(buffer, totalReceived, size - totalReceived, SocketFlags.None);
+                if (bytesReceived == 0)
+                    return null;
+
+                totalReceived += bytesReceived;
+            }
+
+            return buffer;
         }
     }
 }

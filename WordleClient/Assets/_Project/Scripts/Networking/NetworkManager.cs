@@ -9,10 +9,14 @@ public class NetworkManager : MonoBehaviour
     public static NetworkManager Instance;
     private static Network network;
 
+    // caching data is needed for cases when the client's
+    // scene transition is slower than an event's invoke
+    // so unity objects can access these cached data if needed
     private List<RoomData> latestLobbyData;
     private RoomData latestRoomData;
     private Queue<Player> latestResults;
 
+    // events for other unity objects to subscribe to
     public static event Action<string> OnUnexpected;
     public static event Action<List<RoomData>> OnLobbyChanged;
     public static event Action<string, string> OnCreateRoom;
@@ -25,6 +29,7 @@ public class NetworkManager : MonoBehaviour
     public static event Action<Queue<Player>> OnReceivedResults;
     public static event Action OnRestartGame;
 
+    // make this to a singleton
     void Awake()
     {
         if(Instance != null)
@@ -58,6 +63,8 @@ public class NetworkManager : MonoBehaviour
         network.CloseSocket();
     }
 
+    // This function splits the message by semi-colon and sends it off
+    // to other functions for proper parsing
     private void HandleServerMessage(string message)
     {
         string[] parts = message.Split(';', StringSplitOptions.RemoveEmptyEntries);
@@ -110,11 +117,16 @@ public class NetworkManager : MonoBehaviour
                 break;
         }
     }
+
+    // This function simply invokes objects subscribed to user id requests
+    // and send the user id
     private void HandleGetUserId(string[] parts)
     {
         OnUserIdReceived?.Invoke(int.Parse(parts[1]));
     }
 
+    // This function creates room data objects and sets the room names.
+    // player counts, and in game status
     private void HandleLobbyChanged(string[] parts)
     {
         List<RoomData> lobbyData = new List<RoomData>();
@@ -134,17 +146,22 @@ public class NetworkManager : MonoBehaviour
         OnLobbyChanged?.Invoke(lobbyData);
     }
 
+    // This function invokes subscribed objects for status messages
+    // when creating rooms
     private void HandleCreateStatus(string[] parts)
     {
         OnCreateRoom?.Invoke(parts[1], parts[2]);
     }
 
+    // This function invokes subscribed objects for status messages
+    // when joining rooms
     private void HandleJoinStatus(string[] parts)
     {
         OnJoinRoom?.Invoke(parts[1], parts[2]);
     }
 
-    // Highly inefficient but should be fine for this project
+    // This function creates room objects with room names, host id,
+    // player count, and adding player objects to the room player list
     private void HandleOnRoomChanged(string[] parts)
     {
         RoomData roomData = new RoomData();
@@ -167,6 +184,8 @@ public class NetworkManager : MonoBehaviour
         OnRoomDataUpdated?.Invoke(latestRoomData);
     }
 
+    // This function handles creating a dictionary of letter positions
+    // and their corresponding correctness, along with the user and their guess count
     private void HandleOnMakeGuess(string[] parts)
     {
         int userId = int.Parse(parts[1]);
@@ -187,6 +206,8 @@ public class NetworkManager : MonoBehaviour
         OnMakeGuess?.Invoke(userId, guessCount, letterResults);
     }
 
+    // This function handles creating a Queue of players ordered
+    // by their guess count to be shown in the results scene
     private void HandleOnReceivedResults(string[] parts)
     {
         Queue<Player> results = new Queue<Player>();
