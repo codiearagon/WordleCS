@@ -53,6 +53,11 @@ public class NetworkManager : MonoBehaviour
         network.CloseSocket();
     }
 
+    private void OnDestroy()
+    {
+        network.CloseSocket();
+    }
+
     private void HandleServerMessage(string message)
     {
         string[] parts = message.Split(';', StringSplitOptions.RemoveEmptyEntries);

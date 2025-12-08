@@ -39,6 +39,11 @@ public class StartUIManager : MonoBehaviour
         SceneManager.LoadScene("LobbyScene");
     }
 
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
     private void ShowStatus(string text)
     {
         if (statusCoroutine != null)

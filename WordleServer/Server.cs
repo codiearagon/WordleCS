@@ -161,7 +161,11 @@ namespace WordleServer
             {
                 if (room.roomName == roomName)
                 {
-                    if (room.players.Count != room.maxPlayers)
+                    if (room.players.Count == room.maxPlayers)
+                        player.SendMessage("join_status;failed;room is full");
+                    else if (room.inGame)
+                        player.SendMessage("join_status;failed;room is in game");
+                    else 
                     {
                         room.AddPlayer(player);
                         player.SendMessage("join_status;success;room exists");
@@ -169,8 +173,6 @@ namespace WordleServer
                         RoomChanged(player.room);
                         LobbyChanged(); // update players in lobby with room player count
                     }
-                    else
-                        player.SendMessage("join_status;failed;room is full");
 
                     return;
                 }

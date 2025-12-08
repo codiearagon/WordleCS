@@ -70,17 +70,13 @@ public class Network
                 string message = ReceiveString();
                 if (message == null)
                 {
-                    Debug.Log("Client disconnected.");
                     break;
                 }
 
                 OnMessageReceived?.Invoke(message);
             }
         } 
-        catch (SocketException)
-        {
-            Debug.LogError("Disconnected unexpectedly");
-        }
+        catch (SocketException) {}
         finally
         {
             if(clientSocket.Connected)
