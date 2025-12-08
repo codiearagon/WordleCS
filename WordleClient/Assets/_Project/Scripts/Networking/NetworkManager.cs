@@ -202,9 +202,9 @@ public class NetworkManager : MonoBehaviour
         OnReceivedResults?.Invoke(latestResults);
     }
 
-    public void ConnectToServer()
+    public void ConnectToServer(string address)
     {
-        network.ConnectToServer();
+        network.ConnectToServer(address);
     }
 
     public void SetUsername(string name)

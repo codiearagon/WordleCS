@@ -6,16 +6,18 @@ using UnityEngine.SceneManagement;
 public class StartUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject statusArea;
+    [SerializeField] private TMP_InputField addressField;
+    [SerializeField] private TMP_InputField nameField;
     Coroutine statusCoroutine;
 
-    public void ConnectToServer(TMP_InputField name)
+    public void ConnectToServer()
     {
-        if (string.IsNullOrEmpty(name.text))
+        if (string.IsNullOrEmpty(nameField.text))
         {
             ShowStatus("Name cannot be empty.");
             return;
         }
-        else if (name.text.Contains(';'))
+        else if (nameField.text.Contains(';'))
         {
             ShowStatus("Name cannot contain ;");
             return;
@@ -23,16 +25,16 @@ public class StartUIManager : MonoBehaviour
 
         try
         {
-            NetworkManager.Instance.ConnectToServer();
+            NetworkManager.Instance.ConnectToServer(addressField.text);
         }
         catch
         {
-            ShowStatus("Failed to connect to server");
+            ShowStatus("Failed to connect to server, server may be closed or address is wrong");
             return;
         }
 
-        PlayerManager.player.SetUsername(name.text);
-        NetworkManager.Instance.SetUsername(name.text);
+        PlayerManager.player.SetUsername(nameField.text);
+        NetworkManager.Instance.SetUsername(nameField.text);
         NetworkManager.Instance.GetUserId(); // user id is server generated
         SceneManager.LoadScene("LobbyScene");
     }

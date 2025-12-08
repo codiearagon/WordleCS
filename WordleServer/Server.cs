@@ -9,7 +9,6 @@ namespace WordleServer
 {
     class Server
     {
-        private const string ADDRESS = "127.0.0.1";
         private const int PORT = 11020;
 
         private static Socket serverSock = new Socket
@@ -22,18 +21,27 @@ namespace WordleServer
 
         static void Main(string[] args)
         {
-            CreateServer();
+            Console.WriteLine("Enter Address: ");
+            string address = Console.ReadLine();
+
+            if (address == null)
+            {
+                Console.WriteLine("Address is null");
+                return;
+            }
+
+            CreateServer(address);
         }
 
-        private static void CreateServer()
+        private static void CreateServer(string address)
         {
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ADDRESS), PORT);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(address), PORT);
 
             Console.WriteLine("Creating server...");
             serverSock.Bind(localEndPoint);
 
             serverSock.Listen(10);
-            Console.WriteLine("Listening to {0}:{1}", ADDRESS, PORT);
+            Console.WriteLine("Listening to {0}:{1}", address, PORT);
 
             while(true)
             {

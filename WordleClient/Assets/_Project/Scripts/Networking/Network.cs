@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class Network
 {
-    private const string ADDRESS = "127.0.0.1";
     private const int PORT = 11020;
 
     private Socket clientSocket = new Socket
@@ -17,9 +16,9 @@ public class Network
 
     Thread receiveThread;
     
-    public void ConnectToServer()
+    public void ConnectToServer(string address)
     {
-        clientSocket.Connect(ADDRESS, PORT);
+        clientSocket.Connect(address, PORT);
  	    Debug.Log("Connected to Server");
 
         receiveThread = new Thread(ReceivingLoop);
